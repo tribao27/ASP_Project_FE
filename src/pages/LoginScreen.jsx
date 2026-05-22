@@ -65,8 +65,8 @@ export default function LoginScreen({ onLoginSuccess, onNavigate, currentView })
 
       {/* Left: Dynamic Form Panel with beautiful split layout */}
       <main className="flex-1 flex flex-col justify-center items-center px-6 md:px-12 py-6 lg:px-16 z-10 bg-white/85 backdrop-blur-3xl relative max-h-screen overflow-y-auto border-r border-black/5">
-        
-        <motion.div 
+
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
@@ -127,6 +127,7 @@ export default function LoginScreen({ onLoginSuccess, onNavigate, currentView })
                   <span className="absolute left-3.5 text-black/35"><i className="bi bi-person text-[15px]" /></span>
                   <input
                     type="text"
+                    autoComplete="username"
                     placeholder="name@university.edu.vn"
                     className="w-full bg-black/[0.01] border border-black/8 rounded-xl pl-10 pr-4 py-2.5 text-black text-[13px] placeholder-black/20 outline-none focus:border-[#ff5c00] focus:ring-1 focus:ring-[#ff5c00] transition-all"
                     onChange={(e) => form.setFieldsValue({ usernameOrEmail: e.target.value })}
@@ -144,6 +145,7 @@ export default function LoginScreen({ onLoginSuccess, onNavigate, currentView })
                   <span className="absolute left-3.5 text-black/35"><i className="bi bi-lock text-[15px]" /></span>
                   <input
                     type={showPassword ? 'text' : 'password'}
+                    autoComplete={isRegister ? 'new-password' : 'current-password'}
                     placeholder="••••••••"
                     className="w-full bg-black/[0.01] border border-black/8 rounded-xl pl-10 pr-10 py-2.5 text-black text-[13px] placeholder-black/20 outline-none focus:border-[#ff5c00] focus:ring-1 focus:ring-[#ff5c00] transition-all"
                     onChange={(e) => form.setFieldsValue({ password: e.target.value })}
@@ -170,6 +172,7 @@ export default function LoginScreen({ onLoginSuccess, onNavigate, currentView })
                     <span className="absolute left-3.5 text-black/35"><i className="bi bi-lock text-[15px]" /></span>
                     <input
                       type="password"
+                      autoComplete="new-password"
                       placeholder="••••••••"
                       className="w-full bg-black/[0.01] border border-black/8 rounded-xl pl-10 pr-4 py-2.5 text-black text-[13px] placeholder-black/20 outline-none focus:border-[#ff5c00] focus:ring-1 focus:ring-[#ff5c00] transition-all"
                       onChange={(e) => form.setFieldsValue({ confirmPassword: e.target.value })}
@@ -260,56 +263,63 @@ export default function LoginScreen({ onLoginSuccess, onNavigate, currentView })
       </main>
 
       {/* Right: Premium futuristic glass card side panel */}
-      <aside className="hidden lg:flex lg:w-1/2 relative bg-[#f5f5f7] items-center justify-center overflow-hidden h-screen max-h-screen border-l border-black/5">
-        {/* Glow lights */}
-        <div className="absolute top-[15%] right-[5%] w-[45%] h-[45%] bg-[#ff5c00]/4 rounded-full blur-[130px] pointer-events-none" />
-        <div className="absolute bottom-[10%] left-[15%] w-[40%] h-[40%] bg-[#007aff]/3 rounded-full blur-[100px] pointer-events-none" />
-
-        <div className="absolute inset-0 z-0">
+      {/* Right: Premium Image Background Panel */}
+      <aside className="hidden lg:flex lg:w-1/2 relative items-center justify-center overflow-hidden h-screen max-h-screen">
+        {/* Background Image from Unsplash (Modern Study Space) */}
+        <div className="absolute inset-0 z-0 bg-black">
           <img
-            alt="AI Network Visualization"
-            className="w-full h-full object-cover mix-blend-multiply opacity-[0.04] scale-105"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjb8W6vfiSfU7-0RwrQsqXaPsukMt7P35VlIIImo41_GbBGPfhKKULZPMP-x9EWuaQwCiNu3q6316rU7WOoZP4ea26sio4VocpIqRzuSWd35On36YQCCbQzx83QOftN1b1aoZHy_Vos7J1EYVhESo9qRvl67O05mge3_1zxKmD9CiktYDvg3wyeqzcC0XWGNwdLH77iP18VV7fuO4lUkdK6S8l-3s3wdsnUIQ_KxRTo3PTq94F-jDT_tA33LSkxkaNnIPLVA1JJOw"
+            alt="Modern Study Space"
+            className="w-full h-full object-cover scale-105"
+            src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000&auto=format&fit=crop"
           />
         </div>
+        
+        {/* Orange Brand Overlay (Duotone effect) */}
+        <div className="absolute inset-0 z-10 bg-gradient-to-br from-[#ff8a00]/90 via-[#ff5c00]/80 to-[#cc4a00]/95 mix-blend-multiply" />
+        
+        {/* Bottom Dark Gradient for Text Readability */}
+        <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-90" />
 
+        {/* Content */}
         <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-10 p-10 max-w-lg text-left"
+          className="relative z-20 p-12 max-w-xl text-left w-full mt-auto mb-16"
         >
-          <div className="bg-white/80 backdrop-blur-3xl border border-black/5 p-8 rounded-[28px] relative overflow-hidden shadow-sm">
-            <div className="absolute -top-12 -right-12 w-24 h-24 bg-black/5 rounded-full blur-2xl" />
+          {/* Decorative Icon */}
+          <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-8 text-white border border-white/30 shadow-2xl">
+            <i className="bi bi-lightbulb-fill text-[32px] text-white" />
+          </div>
 
-            <div className="w-11 h-11 bg-black/[0.02] rounded-xl flex items-center justify-center mb-6 text-black border border-black/10 orange-glow">
-              <i className="bi bi-shield-lock text-[20px] text-[#ff5c00]" />
+          <h2 className="text-[42px] font-extrabold text-white mb-5 leading-[1.15] tracking-tight drop-shadow-xl">
+            Khám phá kho tàng <br />
+            <span className="text-[#ffeedd]">tri thức bất tận.</span>
+          </h2>
+
+          <p className="text-[16px] text-white/90 mb-10 leading-relaxed font-semibold max-w-md drop-shadow-md">
+            Hệ sinh thái học tập tích hợp Trí tuệ Nhân tạo giúp bạn tối ưu hóa hàng nghìn giờ nghiên cứu và lưu trữ giáo trình một cách thông minh nhất.
+          </p>
+
+          {/* Testimonial / Trust Indicator */}
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-[24px] shadow-2xl inline-block">
+            <div className="flex items-center gap-4 mb-3">
+              <div className="flex -space-x-3">
+                <img src="https://i.pravatar.cc/100?img=32" className="w-10 h-10 rounded-full border-2 border-[#ff5c00] shadow-md" alt="User 1" />
+                <img src="https://i.pravatar.cc/100?img=44" className="w-10 h-10 rounded-full border-2 border-[#ff5c00] shadow-md" alt="User 2" />
+                <img src="https://i.pravatar.cc/100?img=57" className="w-10 h-10 rounded-full border-2 border-[#ff5c00] shadow-md" alt="User 3" />
+              </div>
+              <div className="flex gap-1 text-[#ffd60a] text-[13px] drop-shadow-md">
+                <i className="bi bi-star-fill" />
+                <i className="bi bi-star-fill" />
+                <i className="bi bi-star-fill" />
+                <i className="bi bi-star-fill" />
+                <i className="bi bi-star-fill" />
+              </div>
             </div>
-
-            <h2 className="text-[26px] font-extrabold text-black mb-4 leading-tight tracking-tight">
-              Mở khóa tri thức cùng Trợ lý Học tập AI
-            </h2>
-
-            <p className="text-[13.5px] text-black/55 mb-8 leading-relaxed font-semibold">
-              Tự động hóa phân loại, phân tích học trình cá nhân và giải đáp kiến thức nâng cao với công nghệ học sâu tích hợp.
+            <p className="text-white/90 text-[13px] font-semibold italic drop-shadow-sm">
+              "AI Study Hub đã thay đổi hoàn toàn cách nhóm mình nghiên cứu đồ án tốt nghiệp. Tốc độ tìm kiếm tài liệu thực sự đáng kinh ngạc!"
             </p>
-
-            <div className="grid grid-cols-3 gap-6 pt-6 border-t border-black/5 text-black">
-              {[
-                { num: '50k+', label: 'Sinh viên' },
-                { num: '1M+', label: 'Tài liệu' },
-                { num: '98%', label: 'Hài lòng' },
-              ].map((s, i) => (
-                <div key={i} className="group hover:scale-105 transition-transform duration-300">
-                  <p className="text-[22px] font-extrabold text-black tracking-tight text-gradient-orange">
-                    {s.num}
-                  </p>
-                  <p className="text-[9px] font-bold text-black/30 uppercase tracking-widest mt-1">
-                    {s.label}
-                  </p>
-                </div>
-              ))}
-            </div>
           </div>
         </motion.div>
       </aside>

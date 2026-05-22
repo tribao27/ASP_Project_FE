@@ -117,20 +117,23 @@ export default function IntroScreen({ onNavigate }) {
 
             {/* Left Column: Copywriting */}
             <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
               className="z-10 text-left lg:col-span-7 space-y-7"
             >
               <motion.span
-                variants={itemVariants}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 className="bg-[#ff5c00]/10 border border-[#ff5c00]/20 text-[#ff5c00] font-extrabold text-[10.5px] px-4 py-2 rounded-full inline-flex items-center gap-2 tracking-wider uppercase backdrop-blur-md shadow-sm"
               >
                 <i className="bi bi-rocket-takeoff text-[#ff5c00] animate-bounce" /> Đón đầu công nghệ AI trong giáo dục
               </motion.span>
 
               <motion.h1
-                variants={itemVariants}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
                 className="text-[46px] md:text-[54px] lg:text-[66px] font-extrabold tracking-tight text-[#1d1d1f] mb-3 leading-[1.03]"
               >
                 Học tập thông minh hơn với{' '}
@@ -138,14 +141,20 @@ export default function IntroScreen({ onNavigate }) {
               </motion.h1>
 
               <motion.p
-                variants={itemVariants}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
                 className="text-[16px] lg:text-[18.5px] text-black/55 max-w-xl leading-relaxed font-semibold"
               >
                 Nền tảng quản trị tài liệu học tập tập trung kết hợp trợ lý AI thế hệ mới. Giải pháp số hóa giúp bạn lưu trữ, tra cứu và tương tác với tri thức nhanh gọn, hiệu quả nhất.
               </motion.p>
 
               <motion.div
-                variants={itemVariants}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
                 className="flex flex-wrap gap-4 pt-4"
               >
                 <Button

@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react';
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { ConfigProvider, App as AntApp } from 'antd';
 import { StyleProvider } from '@ant-design/cssinjs';
 import antdTheme from './theme/antdTheme.js';
@@ -15,12 +16,15 @@ import LoginScreen from './pages/LoginScreen.jsx';
 import DashboardScreen from './pages/DashboardScreen.jsx';
 import AIScreen from './pages/AIScreen.jsx';
 import CommunityScreen from './pages/CommunityScreen.jsx';
+import GroupDetailScreen from './pages/GroupDetailScreen.jsx';
 import ProfileScreen from './pages/ProfileScreen.jsx';
 import TrashScreen from './pages/TrashScreen.jsx';
 import MainLayout from './layouts/MainLayout.jsx';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState('landing');
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [currentUser, setCurrentUser] = useState('');
   const [deletedDocuments, setDeletedDocuments] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -29,26 +33,42 @@ export default function App() {
 
   const { documents, activeDoc, addDocument, removeDocument, selectActiveDoc } = useDocuments();
   const [groups, setGroups] = useState(initialGroups);
+  const [currentGroupId, setCurrentGroupId] = useState(null);
 
   // Authentication protected navigation wrapper
   const handleNavigate = (view) => {
     setSearchTerm(''); // Reset search on page change
-    if (!currentUser && !['landing', 'login', 'register'].includes(view)) {
-      setCurrentView('login');
+    setCurrentGroupId(null); // Reset group view
+    
+    const pathMap = {
+      'landing': '/',
+      'login': '/login',
+      'register': '/register',
+      'dashboard': '/dashboard',
+      'ai': '/ai',
+      'community': '/community',
+      'profile': '/profile',
+      'trash': '/trash'
+    };
+
+    const isPublicView = ['landing', 'login', 'register'].includes(view);
+    
+    if (!currentUser && !isPublicView) {
+      navigate('/login');
     } else {
-      setCurrentView(view);
+      navigate(pathMap[view] || '/');
     }
   };
 
   // Auth callbacks
   const handleLoginSuccess = (email) => {
     setCurrentUser(email);
-    setCurrentView('dashboard');
+    navigate('/dashboard');
   };
 
   const handleLogout = () => {
     setCurrentUser('');
-    setCurrentView('landing');
+    navigate('/');
   };
 
   // Document custom deletion and restoration flows
@@ -70,106 +90,153 @@ export default function App() {
   };
 
   // Community group actions
-  const handleToggleJoinGroup = (groupId) => {
-    setGroups((prev) =>
-      prev.map((grp) => {
-        if (grp.id === groupId) {
-          const isCurrentlyJoined = grp.isJoined;
-          const rawNum = parseInt(grp.members.replace(/,/g, ''));
-          const newNum = isCurrentlyJoined ? rawNum - 1 : rawNum + 1;
-          return {
-            ...grp,
-            isJoined: !isCurrentlyJoined,
-            members: `${newNum.toLocaleString('en-US')} thành viên`,
-          };
-        }
-        return grp;
-      })
-    );
-  };
-
   const handleAddCommunityGroup = (newGroup) => {
     setGroups((prev) => [newGroup, ...prev]);
   };
 
-  // View router configurations
+  const handleRequestJoinGroup = (groupId) => {
+    setGroups(prev => prev.map(grp => {
+      if (grp.id === groupId && !grp.pendingRequests?.includes(currentUser || 'vuongbaovipvip@gmail.com')) {
+        return { ...grp, pendingRequests: [...(grp.pendingRequests || []), currentUser || 'vuongbaovipvip@gmail.com'] };
+      }
+      return grp;
+    }));
+  };
+
+  const handleApproveJoinGroup = (groupId, userEmail) => {
+    setGroups(prev => prev.map(grp => {
+      if (grp.id === groupId) {
+        return {
+          ...grp,
+          pendingRequests: grp.pendingRequests.filter(e => e !== userEmail),
+          members: [...grp.members, { email: userEmail, role: 'member', joinedAt: new Date().toISOString().split('T')[0] }]
+        };
+      }
+      return grp;
+    }));
+  };
+
+  const handleRejectJoinGroup = (groupId, userEmail) => {
+    setGroups(prev => prev.map(grp => {
+      if (grp.id === groupId) {
+        return {
+          ...grp,
+          pendingRequests: grp.pendingRequests.filter(e => e !== userEmail)
+        };
+      }
+      return grp;
+    }));
+  };
+
+  const handlePublishDocumentGroup = (groupId, document) => {
+    setGroups(prev => prev.map(grp => {
+      if (grp.id === groupId) {
+        return { ...grp, documents: [...(grp.documents || []), document] };
+      }
+      return grp;
+    }));
+  };
+
+  const handleDeleteGroupDocument = (groupId, docId) => {
+    setGroups(prev => prev.map(grp => {
+      if (grp.id === groupId) {
+        return { ...grp, documents: grp.documents.filter(d => d.id !== docId) };
+      }
+      return grp;
+    }));
+  };
+
   const storagePercentage = Math.min(100, Math.max(15, documents.length * 12.5));
+  
+  // Determine currentView string for MainLayout active state based on pathname
+  const getCurrentViewFromPath = () => {
+    const path = location.pathname;
+    if (path.startsWith('/dashboard')) return 'dashboard';
+    if (path.startsWith('/ai')) return 'ai';
+    if (path.startsWith('/community')) return 'community';
+    if (path.startsWith('/profile')) return 'profile';
+    if (path.startsWith('/trash')) return 'trash';
+    return 'landing';
+  };
+
+  const currentView = getCurrentViewFromPath();
   const isSidebarVisible = ['dashboard', 'ai', 'community', 'profile', 'trash'].includes(currentView);
 
-  const renderView = () => {
-    switch (currentView) {
-      case 'landing':
-        return <IntroScreen onNavigate={handleNavigate} />;
-      case 'login':
-      case 'register':
-        return (
-          <LoginScreen
-            onLoginSuccess={handleLoginSuccess}
-            onNavigate={handleNavigate}
-            currentView={currentView}
+  const pageContent = (
+    <Routes>
+      <Route path="/" element={<IntroScreen onNavigate={handleNavigate} />} />
+      <Route path="/login" element={<LoginScreen onLoginSuccess={handleLoginSuccess} onNavigate={handleNavigate} currentView="login" />} />
+      <Route path="/register" element={<LoginScreen onLoginSuccess={handleLoginSuccess} onNavigate={handleNavigate} currentView="register" />} />
+      <Route path="/dashboard" element={
+        <DashboardScreen
+          documents={documents}
+          searchTerm={searchTerm}
+          onAddDocument={addDocument}
+          onRemoveDocument={handleRemoveDocument}
+          onSelectActiveDocument={selectActiveDoc}
+          currentUser={currentUser || 'Alex Nguyen'}
+          onLogout={handleLogout}
+          onNavigate={handleNavigate}
+        />
+      } />
+      <Route path="/ai" element={
+        <AIScreen
+          documents={documents}
+          activeDoc={activeDoc}
+          searchTerm={searchTerm}
+          onSelectActiveDoc={selectActiveDoc}
+          onNavigate={handleNavigate}
+          accentColor={accentColor}
+        />
+      } />
+      <Route path="/community" element={
+        currentGroupId ? (
+          <GroupDetailScreen
+            group={groups.find(g => g.id === currentGroupId)}
+            currentUser={currentUser || 'vuongbaovipvip@gmail.com'}
+            storagePercentage={storagePercentage}
+            onBack={() => setCurrentGroupId(null)}
+            onPublishDocument={handlePublishDocumentGroup}
+            onDeleteDocument={handleDeleteGroupDocument}
+            onApproveJoin={handleApproveJoinGroup}
+            onRejectJoin={handleRejectJoinGroup}
           />
-        );
-      case 'dashboard':
-        return (
-          <DashboardScreen
-            documents={documents}
-            searchTerm={searchTerm}
-            onAddDocument={addDocument}
-            onRemoveDocument={handleRemoveDocument}
-            onSelectActiveDocument={selectActiveDoc}
-            currentUser={currentUser || 'Alex Nguyen'}
-            onLogout={handleLogout}
-            onNavigate={handleNavigate}
-          />
-        );
-      case 'ai':
-        return (
-          <AIScreen
-            documents={documents}
-            activeDoc={activeDoc}
-            searchTerm={searchTerm}
-            onSelectActiveDoc={selectActiveDoc}
-            onNavigate={handleNavigate}
-            accentColor={accentColor}
-          />
-        );
-      case 'community':
-        return (
+        ) : (
           <CommunityScreen
             groups={groups}
             searchTerm={searchTerm}
-            onToggleJoin={handleToggleJoinGroup}
+            currentUser={currentUser || 'vuongbaovipvip@gmail.com'}
+            onRequestJoin={handleRequestJoinGroup}
+            onViewDetail={setCurrentGroupId}
             onAddGroup={handleAddCommunityGroup}
             onNavigate={handleNavigate}
           />
-        );
-      case 'profile':
-        return (
-          <ProfileScreen
-            currentUser={currentUser || 'vuongbaovipvip@gmail.com'}
-            documentsCount={documents.length}
-            storagePercentage={storagePercentage}
-            avatarUrl={avatarUrl}
-            onAvatarChange={setAvatarUrl}
-            accentColor={accentColor}
-            onAccentColorChange={(color) => {
-              setAccentColor(color);
-              document.documentElement.style.setProperty('--color-primary', color);
-            }}
-          />
-        );
-      case 'trash':
-        return (
-          <TrashScreen
-            deletedDocs={deletedDocuments}
-            onRestoreDoc={handleRestoreDocument}
-            onPermanentlyDeleteDoc={handlePermanentlyDeleteDocument}
-          />
-        );
-      default:
-        return <IntroScreen onNavigate={handleNavigate} />;
-    }
-  };
+        )
+      } />
+      <Route path="/profile" element={
+        <ProfileScreen
+          currentUser={currentUser || 'vuongbaovipvip@gmail.com'}
+          documentsCount={documents.length}
+          storagePercentage={storagePercentage}
+          avatarUrl={avatarUrl}
+          onAvatarChange={setAvatarUrl}
+          accentColor={accentColor}
+          onAccentColorChange={(color) => {
+            setAccentColor(color);
+            document.documentElement.style.setProperty('--color-primary', color);
+          }}
+        />
+      } />
+      <Route path="/trash" element={
+        <TrashScreen
+          deletedDocs={deletedDocuments}
+          onRestoreDoc={handleRestoreDocument}
+          onPermanentlyDeleteDoc={handlePermanentlyDeleteDocument}
+        />
+      } />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
 
   return (
     <StyleProvider layer>
@@ -198,10 +265,10 @@ export default function App() {
                 avatarUrl={avatarUrl}
                 accentColor={accentColor}
               >
-                {renderView()}
+                {pageContent}
               </MainLayout>
             ) : (
-              renderView()
+              pageContent
             )}
           </div>
         </AntApp>

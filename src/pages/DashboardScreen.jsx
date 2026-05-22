@@ -213,7 +213,7 @@ export default function DashboardScreen({
   return (
     <div className="flex-1 w-full h-full overflow-y-auto px-4 md:px-8 pb-10 pt-4 text-left select-none relative">
       <div>
-        
+
         {/* Title + Action bar */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
@@ -310,14 +310,12 @@ export default function DashboardScreen({
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setActiveTab(tab.value)}
-                className={`px-4.5 py-2 rounded-full text-[12px] transition-all duration-200 flex items-center gap-2 cursor-pointer ${
-                  isActive ? classes.active : classes.inactive
-                }`}
+                className={`px-4.5 py-2 rounded-full text-[12px] transition-all duration-200 flex items-center gap-2 cursor-pointer ${isActive ? classes.active : classes.inactive
+                  }`}
               >
                 <span>{tab.label}</span>
-                <span className={`text-[9.5px] px-2 py-0.5 rounded-full font-bold ${
-                  isActive ? classes.badgeActive : classes.badgeInactive
-                }`}>
+                <span className={`text-[9.5px] px-2 py-0.5 rounded-full font-bold ${isActive ? classes.badgeActive : classes.badgeInactive
+                  }`}>
                   {count}
                 </span>
               </motion.button>
@@ -328,14 +326,15 @@ export default function DashboardScreen({
         {/* Main List content viewport */}
         <AnimatePresence mode="wait">
           {viewMode === 'list' ? (
-            <motion.div 
+            <motion.div
               key="list-view"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
-              className="premium-glass rounded-2xl border border-black/5 p-2 shadow-sm overflow-hidden flex-1"
+              className="premium-glass rounded-2xl border border-black/5 p-2 shadow-sm overflow-x-auto flex-1"
             >
               <Table
+                className="min-w-[600px]"
                 columns={columns}
                 dataSource={filteredDocs}
                 rowKey="id"
@@ -349,7 +348,7 @@ export default function DashboardScreen({
               />
             </motion.div>
           ) : (
-            <motion.div 
+            <motion.div
               key="grid-view"
               variants={gridContainer}
               initial="hidden"
@@ -357,7 +356,7 @@ export default function DashboardScreen({
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 flex-1"
             >
               {filteredDocs.map((doc) => (
-                <motion.div 
+                <motion.div
                   key={doc.id}
                   variants={gridItem}
                   className="bg-white rounded-2xl border border-black/5 p-5 shadow-sm flex flex-col justify-between group overflow-hidden relative hover-card-depth cursor-pointer"
@@ -367,15 +366,15 @@ export default function DashboardScreen({
                       <Tag color={getFileTagColor(doc.type)} className="font-bold text-[9px] rounded-full uppercase border-none px-2 py-0.5">
                         {getFileTypeLabel(doc.type)}
                       </Tag>
-                      <Button 
-                        type="text" 
-                        danger 
-                        size="small" 
+                      <Button
+                        type="text"
+                        danger
+                        size="small"
                         className="text-black/30 hover:text-red-500 hover:bg-red-500/10 rounded-lg h-7 w-7 flex items-center justify-center cursor-pointer"
-                        onClick={(e) => { 
+                        onClick={(e) => {
                           e.stopPropagation();
-                          onRemoveDocument(doc.id); 
-                          message.success('Đã chuyển tài liệu vào Thùng rác.'); 
+                          onRemoveDocument(doc.id);
+                          message.success('Đã chuyển tài liệu vào Thùng rác.');
                         }}
                       >
                         <i className="bi bi-trash3" />
@@ -394,10 +393,10 @@ export default function DashboardScreen({
                       <p>{doc.uploadedAt}</p>
                       <p>{doc.size}</p>
                     </div>
-                    <Button 
-                      type="primary" 
-                      size="small" 
-                      onClick={() => handleAskAIOnDoc(doc)} 
+                    <Button
+                      type="primary"
+                      size="small"
+                      onClick={() => handleAskAIOnDoc(doc)}
                       className="rounded-lg font-bold text-[11px] h-7 px-3"
                     >
                       <i className="bi bi-chat-dots mr-1" /> Hỏi AI
@@ -427,9 +426,8 @@ export default function DashboardScreen({
                 const moved = Math.abs(position.x - offsetStart.x) > 8 || Math.abs(position.y - offsetStart.y) > 8;
                 if (!moved) onNavigate('ai');
               }}
-              className={`w-[54px] h-[54px] bg-gradient-to-tr from-[#ff8a00] to-[#ff5c00] text-white rounded-full flex items-center justify-center border-2 border-white/20 shadow-2xl orange-glow hover:scale-105 active:scale-95 transition-all cursor-grab active:cursor-grabbing ${
-                isDragging ? 'scale-110 shadow-2xl ring-4 ring-[#ff5c00]/30' : ''
-              }`}
+              className={`w-[54px] h-[54px] bg-gradient-to-tr from-[#ff8a00] to-[#ff5c00] text-white rounded-full flex items-center justify-center border-2 border-white/20 shadow-2xl orange-glow hover:scale-105 active:scale-95 transition-all cursor-grab active:cursor-grabbing ${isDragging ? 'scale-110 shadow-2xl ring-4 ring-[#ff5c00]/30' : ''
+                }`}
             >
               <i className={`bi bi-stars text-[22px] ${isDragging ? 'animate-pulse' : 'animate-bounce duration-[3s]'}`} />
             </button>
@@ -437,100 +435,132 @@ export default function DashboardScreen({
         </div>
       </div>
 
-      {/* Upload Modal (Premium Vercel Glassmorphism) */}
+      {/* Upload Modal (Premium Glassmorphism) */}
       <Modal
         title={null}
         open={showUploadModal}
         onCancel={() => setShowUploadModal(false)}
         footer={null}
-        width={480}
+        width={720}
         styles={{ body: { padding: 0 } }}
-        destroyOnClose
+        destroyOnHidden
         centered
+        className="!p-0 overflow-hidden"
       >
-        <div className="bg-[#fafafb] px-6 py-6 border-b border-black/5 text-black flex items-center gap-4 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff5c00]/3 rounded-full blur-2xl pointer-events-none" />
-          <div className="w-10 h-10 rounded-xl bg-black/[0.01] border border-black/5 flex items-center justify-center text-[#ff5c00] orange-glow">
-            <i className="bi bi-file-earmark-plus text-[20px]" />
-          </div>
-          <div className="text-left">
-            <h3 className="text-[16px] font-bold text-black tracking-tight">Tải tài liệu lên</h3>
-            <p className="text-[10px] text-black/40 font-bold uppercase tracking-wider mt-1">Đồng bộ học trình thông minh</p>
+        <div className="bg-gradient-to-br from-[#ff8a00] to-[#ff5c00] px-6 py-5 flex items-center gap-4 relative overflow-hidden rounded-t-2xl shadow-inner">
+          {/* Decorative Background Elements */}
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-black/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 pointer-events-none mix-blend-overlay" />
+          
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0, rotate: -15 }}
+            animate={{ scale: 1, opacity: 1, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+            className="w-12 h-12 rounded-xl bg-white/20 border border-white/30 flex items-center justify-center text-white backdrop-blur-md shadow-xl relative z-10"
+          >
+            <i className="bi bi-cloud-arrow-up-fill text-[24px]" />
+          </motion.div>
+          <div className="text-left text-white z-10">
+            <h3 className="text-[18px] font-extrabold tracking-tight drop-shadow-md leading-tight">Tải tài liệu lên</h3>
+            <p className="text-[10.5px] font-bold text-white/90 uppercase tracking-widest mt-0.5">Đồng bộ & phân tích bằng AI</p>
           </div>
         </div>
 
-        <div className="p-6 bg-white rounded-b-2xl">
-          <Dragger
-            beforeUpload={(file) => {
-              form.setFieldsValue({
-                name: file.name,
-                type: detectFileType(file.name),
-                size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-              });
-              return false;
-            }}
-            showUploadList={false}
-            className="!rounded-2xl !border-dashed !border-black/10 hover:!border-[#ff5c00]/40 !bg-black/[0.005] hover:!bg-[#ff5c00]/5 mb-6 transition-all duration-300 py-7"
-          >
-            <p className="ant-upload-drag-icon">
-              <i className="bi bi-cloud-arrow-up text-[#ff5c00] text-[40px] animate-pulse" />
-            </p>
-            <p className="text-[13px] font-bold text-black mt-4">Kéo & thả tệp tin học tập vào đây</p>
-            <p className="text-[11.5px] text-black/50 mt-1 font-semibold">
-              Hoặc <span className="text-[#ff5c00] font-bold cursor-pointer">Bấm chọn tệp tin</span>
-            </p>
-            <p className="text-[9px] text-[#ff5c00] font-bold uppercase tracking-wider bg-[#ff5c00]/10 border border-[#ff5c00]/20 rounded-full px-3 py-1 mt-3 inline-block">
-              Hỗ trợ PDF, DOCX, XLSX, Hình ảnh
-            </p>
-          </Dragger>
-
-          <Form form={form} layout="vertical" onFinish={handleUploadSubmit} initialValues={{ type: 'pdf', size: '1.5 MB' }}>
-            <Form.Item
-              label={<span className="text-[10px] font-bold text-black/50 uppercase tracking-wider">Tên tài liệu</span>}
-              name="name"
-              rules={[{ required: true, message: 'Vui lòng điền tên tệp!' }]}
-            >
-              <input 
-                type="text" 
-                placeholder="Giao_Trinh_Khai_Pha_Du_Lieu.pdf" 
-                className="w-full bg-black/[0.01] border border-black/8 rounded-xl px-3.5 py-2.5 text-black text-[13px] outline-none focus:border-[#ff5c00] transition-all"
-              />
-            </Form.Item>
-
-            <div className="grid grid-cols-2 gap-4">
-              <Form.Item label={<span className="text-[10px] font-bold text-black/50 uppercase tracking-wider">Loại tài liệu</span>} name="type">
-                <Select className="font-semibold text-[13px]" popupClassName="rounded-xl" options={UPLOAD_TYPE_OPTIONS} />
-              </Form.Item>
-              <Form.Item label={<span className="text-[10px] font-bold text-black/50 uppercase tracking-wider">Dung lượng tệp</span>} name="size">
-                <input 
-                  type="text" 
-                  placeholder="2.5 MB" 
-                  className="w-full bg-black/[0.01] border border-black/8 rounded-xl px-3.5 py-2.5 text-black text-[13px] outline-none focus:border-[#ff5c00] transition-all"
-                />
-              </Form.Item>
-            </div>
-
-            <Form.Item label={<span className="text-[10px] font-bold text-black/50 uppercase tracking-wider">Nội dung cốt lõi (Để Trợ lý AI phân tích)</span>} name="content">
-              <textarea 
-                rows={3} 
-                placeholder="Điền hoặc dán tóm tắt lý thuyết, nội dung cốt lõi của môn học vào đây..." 
-                className="w-full bg-black/[0.01] border border-black/8 rounded-xl px-3.5 py-2.5 text-black text-[13px] outline-none focus:border-[#ff5c00] transition-all resize-none"
-              />
-            </Form.Item>
-
-            <div className="flex gap-3 justify-end pt-4 border-t border-black/5">
-              <Button onClick={() => setShowUploadModal(false)} className="rounded-xl font-semibold text-[12px] border-black/10 hover:border-black/20 h-9">
-                Hủy thao tác
-              </Button>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="rounded-xl font-bold text-[12.5px] h-9"
+        <div className="p-6 bg-[#fcfcfd] rounded-b-2xl relative">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-stretch">
+            
+            {/* Dragger Column */}
+            <div className="md:col-span-5 h-full">
+              <Dragger
+                beforeUpload={(file) => {
+                  form.setFieldsValue({
+                    name: file.name,
+                    type: detectFileType(file.name),
+                    size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+                  });
+                  return false;
+                }}
+                showUploadList={false}
+                className="!rounded-2xl !border-2 !border-dashed !border-[#ff5c00]/20 hover:!border-[#ff5c00] !bg-gradient-to-b !from-[#ff5c00]/[0.03] !to-transparent hover:!from-[#ff5c00]/10 transition-all duration-500 group overflow-hidden relative shadow-sm h-full flex flex-col justify-center py-6"
+                style={{ height: '100%' }}
               >
-                Xác nhận tải lên
-              </Button>
+                <div className="relative z-10 flex flex-col items-center justify-center px-2">
+                  <div className="w-14 h-14 bg-white shadow-md shadow-[#ff5c00]/10 rounded-full flex items-center justify-center mb-3 group-hover:-translate-y-1 transition-transform duration-500 border border-black/5">
+                    <i className="bi bi-cloud-upload text-[#ff5c00] text-[26px] group-hover:scale-110 group-hover:text-[#ff8a00] transition-all duration-500" />
+                  </div>
+                  <h4 className="text-[14px] font-extrabold text-black mb-1 leading-tight px-1">Kéo thả tài liệu học tập</h4>
+                  <p className="text-[11.5px] text-black/50 font-bold mb-4 leading-tight">
+                    hoặc <span className="text-[#ff5c00] underline decoration-[#ff5c00]/30 underline-offset-4 hover:decoration-[#ff5c00] transition-colors">chọn từ máy tính</span>
+                  </p>
+                  
+                  <div className="flex gap-1.5 flex-wrap justify-center px-2">
+                    {['PDF', 'DOCX', 'XLSX'].map(ext => (
+                      <span key={ext} className="text-[9px] font-extrabold text-black/50 bg-white border border-black/5 shadow-sm rounded-md px-1.5 py-0.5 tracking-wide">{ext}</span>
+                    ))}
+                  </div>
+                </div>
+              </Dragger>
             </div>
-          </Form>
+
+            {/* Form Column */}
+            <div className="md:col-span-7 flex flex-col justify-between">
+              <Form form={form} layout="vertical" onFinish={handleUploadSubmit} initialValues={{ type: 'pdf', size: '1.5 MB' }} className="h-full flex flex-col">
+                <div className="bg-white p-5 rounded-2xl border border-black/5 shadow-sm space-y-1 flex-1">
+                  <Form.Item
+                    label={<span className="text-[10.5px] font-bold text-black/50 uppercase tracking-widest flex items-center gap-1.5"><i className="bi bi-file-earmark-text text-[#ff5c00]" /> Tên tài liệu</span>}
+                    name="name"
+                    rules={[{ required: true, message: 'Vui lòng điền tên tệp!' }]}
+                    className="mb-3.5"
+                  >
+                    <input
+                      type="text"
+                      placeholder="Ví dụ: Giao_Trinh.pdf"
+                      className="w-full bg-black/[0.02] border-2 border-transparent hover:border-black/5 rounded-xl px-4 py-2 text-black text-[12.5px] font-semibold outline-none focus:border-[#ff5c00] focus:bg-white focus:ring-4 focus:ring-[#ff5c00]/10 transition-all"
+                    />
+                  </Form.Item>
+
+                  <div className="grid grid-cols-2 gap-4 mb-3.5">
+                    <Form.Item label={<span className="text-[10.5px] font-bold text-black/50 uppercase tracking-widest flex items-center gap-1.5"><i className="bi bi-tags text-[#ff5c00]" /> Định dạng</span>} name="type" className="mb-0">
+                      <Select className="font-semibold text-[12.5px] h-[34px]" classNames={{ popup: "rounded-xl font-semibold" }} options={UPLOAD_TYPE_OPTIONS} />
+                    </Form.Item>
+
+                    <Form.Item label={<span className="text-[10.5px] font-bold text-black/50 uppercase tracking-widest flex items-center gap-1.5"><i className="bi bi-hdd text-[#ff5c00]" /> Dung lượng</span>} name="size" className="mb-0">
+                      <input
+                        type="text"
+                        readOnly
+                        className="w-full bg-black/[0.02] border-2 border-transparent rounded-xl px-3 py-[5px] text-black/60 text-[12.5px] font-bold outline-none cursor-not-allowed h-[34px]"
+                      />
+                    </Form.Item>
+                  </div>
+
+                  <Form.Item label={<span className="text-[10.5px] font-bold text-black/50 uppercase tracking-widest flex items-center gap-1.5"><i className="bi bi-body-text text-[#ff5c00]" /> Nội dung tóm tắt</span>} name="content" className="mb-0">
+                    <textarea
+                      rows={2}
+                      placeholder="Ghi chú nhanh để AI có thêm ngữ cảnh phân tích..."
+                      className="w-full bg-black/[0.02] border-2 border-transparent hover:border-black/5 rounded-xl px-3.5 py-2 text-black text-[12.5px] font-semibold outline-none focus:border-[#ff5c00] focus:bg-white focus:ring-4 focus:ring-[#ff5c00]/10 transition-all resize-none"
+                    />
+                  </Form.Item>
+                </div>
+
+                <div className="flex gap-2.5 justify-end mt-4">
+                  <Button 
+                    onClick={() => setShowUploadModal(false)} 
+                    className="rounded-xl font-bold text-[12px] h-[38px] px-5 border-black/10 hover:border-black/20 hover:bg-black/5"
+                  >
+                    Hủy bỏ
+                  </Button>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    className="rounded-xl font-extrabold text-[12px] h-[38px] px-6 shadow-md shadow-[#ff5c00]/30 orange-glow"
+                  >
+                    <i className="bi bi-cloud-arrow-up-fill mr-1" /> Xác nhận Tải lên
+                  </Button>
+                </div>
+              </Form>
+            </div>
+          </div>
         </div>
       </Modal>
     </div>

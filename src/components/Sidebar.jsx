@@ -15,6 +15,8 @@ export default function Sidebar({
   documentsCount,
   deletedDocsCount = 0,
   accentColor,
+  isMobileMenuOpen,
+  onCloseMobileMenu,
 }) {
   const menuItems = [
     {
@@ -35,9 +37,21 @@ export default function Sidebar({
   ];
 
   return (
-    <aside className="w-[260px] bg-white border-r border-black/5 flex flex-col px-4 py-6 fixed h-full left-0 top-0 z-40 select-none overflow-y-auto">
+    <aside 
+      className={`w-[260px] bg-white border-r border-black/5 flex flex-col px-4 py-6 fixed h-full left-0 top-0 z-50 select-none overflow-y-auto transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        isMobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0'
+      }`}
+    >
       {/* Background ambient lighting */}
       <div className="absolute -top-12 -left-12 w-48 h-48 bg-[#ff5c00]/2 rounded-full blur-[80px] pointer-events-none" />
+
+      {/* Mobile Close Button */}
+      <button 
+        onClick={onCloseMobileMenu}
+        className="md:hidden absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-black/5 text-black/50 hover:text-black hover:bg-black/10 transition-colors z-50 cursor-pointer"
+      >
+        <i className="bi bi-x-lg text-[14px]" />
+      </button>
 
       {/* Brand Logo */}
       <motion.div
@@ -67,7 +81,10 @@ export default function Sidebar({
               key={item.key}
               whileHover={{ x: 4, backgroundColor: 'rgba(0, 0, 0, 0.02)' }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => onNavigate(item.key)}
+              onClick={() => {
+                onNavigate(item.key);
+                onCloseMobileMenu && onCloseMobileMenu();
+              }}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all w-full text-left cursor-pointer text-[13px] relative overflow-hidden group ${
                 isActive 
                   ? 'text-white font-semibold shadow-md orange-glow' 
@@ -124,7 +141,10 @@ export default function Sidebar({
             <motion.button
               whileHover={{ x: 4, backgroundColor: 'rgba(0, 0, 0, 0.02)' }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => onNavigate('profile')}
+              onClick={() => {
+                onNavigate('profile');
+                onCloseMobileMenu && onCloseMobileMenu();
+              }}
               className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all w-full text-left cursor-pointer text-[12px] font-medium ${
                 currentView === 'profile' 
                   ? 'bg-black/[0.02] text-[#ff5c00] border border-[#ff5c00]/20' 
@@ -139,7 +159,10 @@ export default function Sidebar({
             <motion.button
               whileHover={{ x: 4, backgroundColor: 'rgba(0, 0, 0, 0.02)' }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => onNavigate('trash')}
+              onClick={() => {
+                onNavigate('trash');
+                onCloseMobileMenu && onCloseMobileMenu();
+              }}
               className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all w-full text-left cursor-pointer text-[12px] font-medium ${
                 currentView === 'trash' 
                   ? 'bg-black/[0.02] text-[#ff5c00] border border-[#ff5c00]/20' 

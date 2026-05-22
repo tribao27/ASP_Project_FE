@@ -4,7 +4,7 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
-import { Button, Tooltip, message } from 'antd';
+import { Button, Tooltip, message, Drawer } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 import FileIcon from '../components/FileIcon.jsx';
 import { getFileTagColor, getFileTypeLabel } from '../utils/helpers.js';
@@ -34,6 +34,8 @@ export default function AIScreen({
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef(null);
   const [searchFocused, setSearchFocused] = useState(false);
+  const [showMobileFiles, setShowMobileFiles] = useState(false);
+  const [showMobileInspector, setShowMobileInspector] = useState(false);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -105,12 +107,8 @@ export default function AIScreen({
     d.name.toLowerCase().includes(finalSearchQuery.toLowerCase())
   );
 
-  return (
-    <div className="flex-1 w-full overflow-hidden text-left p-4 md:p-6 flex flex-col relative select-none bg-[#f5f5f7]">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 items-stretch overflow-hidden">
-          
-          {/* Left Column: Finder-like Side Inspector (lg:col-span-3) */}
-          <div className="lg:col-span-3 flex flex-col bg-white border border-black/[0.04] rounded-3xl p-4.5 shadow-sm h-full overflow-hidden">
+  const leftContent = (
+    <>
             <div className="mb-5">
               <span className="text-[10px] font-black text-black/35 uppercase tracking-widest block mb-2.5">Thư viện liên kết</span>
               <motion.div
@@ -145,7 +143,7 @@ export default function AIScreen({
                       key={doc.id}
                       whileHover={{ scale: 1.015, x: 2 }}
                       whileTap={{ scale: 0.985 }}
-                      onClick={() => handleDocChange(doc)}
+                      onClick={() => { handleDocChange(doc); setShowMobileFiles(false); }}
                       className={`w-full p-3 rounded-2xl border transition-all text-left flex items-center gap-3.5 cursor-pointer relative overflow-hidden group ${
                         isActive 
                           ? 'bg-black/[0.015] border-black/10 text-black font-extrabold shadow-sm' 
@@ -186,162 +184,15 @@ export default function AIScreen({
                 </div>
               )}
             </div>
-          </div>
+    </>
+  );
 
-          {/* Center Column: High-End iMessage-like Chat Hub (lg:col-span-6) */}
-          <div className="lg:col-span-6 flex flex-col bg-white border border-black/[0.04] rounded-3xl shadow-sm h-full overflow-hidden relative">
-            
-            {/* Blurry Chat Header */}
-            <div className="px-5 py-4.5 border-b border-black/[0.04] flex justify-between items-center bg-white/80 backdrop-blur-md z-20">
-              <div className="flex items-center gap-3.5">
-                <div 
-                  className="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-md shadow-orange-500/10 group cursor-pointer"
-                  style={{ background: `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}dd 100%)` }}
-                >
-                  <i className="bi bi-stars text-[17px] animate-gentle-pulse group-hover:rotate-12 transition-transform duration-300" />
-                </div>
-                <div className="text-left">
-                  <h4 className="text-[14px] font-extrabold text-[#1d1d1f] tracking-tight">Trợ lý Phân tích AI</h4>
-                  <span className="text-[9.5px] font-black uppercase tracking-wider block mt-0.5 flex items-center gap-1.5" style={{ color: accentColor }}>
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                    Online & Sẵn sàng
-                  </span>
-                </div>
-              </div>
-              
-              {activeDoc ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-[10px] font-extrabold text-black/60 bg-black/[0.015] border border-black/5 px-3.5 py-1.5 rounded-full flex items-center gap-2 max-w-[190px] shadow-sm"
-                >
-                  <i className="bi bi-link-45deg text-[14px]" style={{ color: accentColor }} />
-                  <span className="truncate">{activeDoc.name}</span>
-                </motion.div>
-              ) : (
-                <span className="text-[10px] font-black text-black/25 uppercase tracking-wider bg-black/[0.005] px-3.5 py-1.5 rounded-full border border-dashed border-black/10">
-                  Chưa liên kết tài liệu
-                </span>
-              )}
-            </div>
-
-            {/* Chat Bubble Flow */}
-            <div className="flex-1 overflow-y-auto p-5.5 space-y-5 bg-white">
-              <AnimatePresence>
-                {messages.map((m) => {
-                  const isAI = m.sender === 'ai';
-                  return (
-                    <motion.div
-                      key={m.id}
-                      initial={{ opacity: 0, y: 12, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                      className={`flex items-start gap-3 ${isAI ? 'justify-start' : 'justify-end'}`}
-                    >
-                      {isAI && (
-                        <div 
-                          className="w-[32px] h-[32px] rounded-full flex items-center justify-center text-white text-[13px] flex-shrink-0 mt-0.5 shadow-md shadow-orange-500/10 border border-white/20"
-                          style={{ background: `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}dd 100%)` }}
-                        >
-                          <i className="bi bi-robot" />
-                        </div>
-                      )}
-                      
-                      <div className="max-w-[78%] space-y-1 text-left">
-                        <div 
-                          className={`px-4.5 py-3 rounded-2xl text-[13px] leading-relaxed whitespace-pre-line ${
-                            isAI 
-                              ? 'bg-[#e9e9eb] text-black border border-black/[0.01] shadow-sm rounded-tl-sm' 
-                              : 'text-white font-semibold shadow-md rounded-tr-sm'
-                          }`}
-                          style={!isAI ? { background: `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}dd 100%)` } : {}}
-                        >
-                          {m.text}
-                        </div>
-                        <span className={`text-[9px] font-black text-black/25 block ${!isAI ? 'text-right' : 'text-left'}`}>
-                          {m.time}
-                        </span>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
-
-              {isTyping && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center gap-3"
-                >
-                  <div 
-                    className="w-[32px] h-[32px] rounded-full flex items-center justify-center text-white text-[13px] flex-shrink-0 shadow-md shadow-orange-500/10 border border-white/20"
-                    style={{ background: `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}dd 100%)` }}
-                  >
-                    <i className="bi bi-robot" />
-                  </div>
-                  <div className="bg-[#e9e9eb] border border-black/[0.01] px-4.5 py-3 rounded-2xl rounded-tl-sm flex items-center gap-1.5 shadow-sm">
-                    <span className="w-1.5 h-1.5 rounded-full animate-bounce delay-0" style={{ backgroundColor: accentColor }} />
-                    <span className="w-1.5 h-1.5 rounded-full animate-bounce delay-[0.15s]" style={{ backgroundColor: accentColor }} />
-                    <span className="w-1.5 h-1.5 rounded-full animate-bounce delay-[0.3s]" style={{ backgroundColor: accentColor }} />
-                  </div>
-                </motion.div>
-              )}
-              
-              <div ref={scrollRef} />
-            </div>
-
-            {/* Quick Actions (Floating Pill prompts) */}
-            {activeDoc && (
-              <div className="px-5 py-2.5 border-t border-black/[0.04] flex gap-2.5 overflow-x-auto bg-[#fafafb] scrollbar-none z-15">
-                {[
-                  { icon: 'bi-card-text', text: 'Tóm tắt tài liệu', prompt: 'Tóm tắt lý thuyết cốt lõi tài liệu' },
-                  { icon: 'bi-question-circle', text: 'Tạo câu hỏi ôn tập', prompt: 'Tạo 3 câu hỏi ôn tập tự kiểm tra' },
-                  { icon: 'bi-book', text: 'Giải thích thuật ngữ', prompt: 'Giải thích các thuật ngữ chuyên ngành' },
-                ].map((act, i) => (
-                  <motion.button
-                    key={i}
-                    whileHover={{ scale: 1.03, backgroundColor: 'rgba(0,0,0,0.03)' }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => handleSendMessage(act.prompt)}
-                    className="px-3.5 py-1.5 rounded-full bg-white hover:bg-black/[0.02] border border-black/5 text-[11px] font-extrabold text-black/60 transition-all cursor-pointer flex-shrink-0 flex items-center gap-1.5 shadow-sm"
-                  >
-                    <i className={`bi ${act.icon}`} style={{ color: accentColor }} />
-                    {act.text}
-                  </motion.button>
-                ))}
-              </div>
-            )}
-
-            {/* High-End Floating iMessage Style Input Form */}
-            <div className="p-3.5 border-t border-black/[0.04] bg-white flex items-center gap-3.5">
-              <input
-                type="text"
-                placeholder={activeDoc ? "Hỏi trợ lý AI bất kỳ điều gì..." : "Vui lòng chọn tài liệu ở cột bên trái để trò chuyện..."}
-                value={inputVal}
-                onChange={(e) => setInputVal(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleSendMessage(); }}
-                disabled={!activeDoc}
-                className="flex-1 bg-[#f4f4f7] border border-black/[0.02] rounded-full px-5 py-2.5 text-black text-[13px] font-semibold placeholder-black/35 outline-none focus:border-black/[0.08] focus:bg-white transition-all disabled:opacity-40 shadow-inner"
-              />
-              <motion.button
-                whileHover={{ scale: 1.05, y: -0.5 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleSendMessage()}
-                disabled={!activeDoc || !inputVal.trim()}
-                className="w-[36px] h-[36px] rounded-full text-white flex items-center justify-center border-none shadow-md shadow-orange-500/10 cursor-pointer disabled:opacity-30 disabled:shadow-none transition-all flex-shrink-0"
-                style={{ background: `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}dd 100%)` }}
-              >
-                <i className="bi bi-send-fill text-[13px]" />
-              </motion.button>
-            </div>
-          </div>
-
-          {/* Right Column: Dynamic Apple Inspector Inspector (lg:col-span-3) */}
-          <div className="lg:col-span-3 flex flex-col bg-white border border-black/[0.04] rounded-3xl p-4.5 shadow-sm h-full overflow-hidden">
+  const rightContent = (
+    <>
             <span className="text-[10px] font-black text-black/35 uppercase tracking-widest block mb-3.5">Thông tin bổ trợ</span>
 
             {/* Sliding Toggle Tabs */}
-            <div className="flex bg-black/[0.015] rounded-2xl p-0.5 border border-black/5 mb-5 shadow-inner">
+            <div className="flex bg-black/[0.015] rounded-2xl p-0.5 border border-black/5 mb-5 shadow-inner shrink-0">
               {[
                 { key: 'summary', label: 'Tóm tắt' },
                 { key: 'qna', label: 'Mục lục' },
@@ -456,9 +307,213 @@ export default function AIScreen({
                 </div>
               )}
             </div>
+    </>
+  );
+
+  return (
+    <div className="flex-1 w-full h-full overflow-hidden text-left p-4 md:p-6 flex flex-col relative select-none bg-transparent">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 items-stretch overflow-hidden">
+          
+          {/* Left Column: Finder-like Side Inspector (lg:col-span-3) */}
+          <div className="hidden lg:flex lg:col-span-3 flex-col bg-white border border-black/[0.04] rounded-3xl p-4.5 shadow-sm h-full overflow-hidden">
+            {leftContent}
+          </div>
+
+
+          {/* Center Column: High-End iMessage-like Chat Hub (lg:col-span-6) */}
+          <div className="lg:col-span-6 flex flex-col bg-white border border-black/[0.04] rounded-3xl shadow-sm h-full overflow-hidden relative">
+            
+            {/* Blurry Chat Header */}
+            <div className="px-4 py-3 md:px-5 md:py-4.5 border-b border-black/[0.04] flex justify-between items-center bg-white/80 backdrop-blur-md z-20 shrink-0">
+              <div className="flex items-center gap-2.5 md:gap-3.5">
+                <button 
+                  onClick={() => setShowMobileFiles(true)}
+                  className="lg:hidden w-8 h-8 flex items-center justify-center rounded-xl bg-black/5 text-black/60 hover:text-black transition-colors shrink-0"
+                >
+                  <i className="bi bi-folder2-open text-[15px]" />
+                </button>
+                <div 
+                  className="w-9 h-9 md:w-10 md:h-10 rounded-xl md:rounded-2xl flex items-center justify-center text-white shadow-md shadow-orange-500/10 group cursor-pointer shrink-0"
+                  style={{ background: `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}dd 100%)` }}
+                >
+                  <i className="bi bi-stars text-[15px] md:text-[17px] animate-gentle-pulse group-hover:rotate-12 transition-transform duration-300" />
+                </div>
+                <div className="text-left hidden sm:block">
+                  <h4 className="text-[13px] md:text-[14px] font-extrabold text-[#1d1d1f] tracking-tight truncate">Trợ lý Phân tích AI</h4>
+                  <span className="text-[9px] md:text-[9.5px] font-black uppercase tracking-wider block mt-0.5 flex items-center gap-1.5" style={{ color: accentColor }}>
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                    Online & Sẵn sàng
+                  </span>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2 shrink-0">
+                {activeDoc ? (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-[10px] font-extrabold text-black/60 bg-black/[0.015] border border-black/5 px-2.5 py-1.5 md:px-3.5 md:py-1.5 rounded-full flex items-center gap-1.5 md:gap-2 max-w-[120px] md:max-w-[190px] shadow-sm"
+                  >
+                    <i className="bi bi-link-45deg text-[14px]" style={{ color: accentColor }} />
+                    <span className="truncate">{activeDoc.name}</span>
+                  </motion.div>
+                ) : (
+                  <span className="hidden sm:inline-block text-[10px] font-black text-black/25 uppercase tracking-wider bg-black/[0.005] px-3.5 py-1.5 rounded-full border border-dashed border-black/10">
+                    Chưa liên kết
+                  </span>
+                )}
+                
+                <button 
+                  onClick={() => setShowMobileInspector(true)}
+                  className="lg:hidden w-8 h-8 flex items-center justify-center rounded-xl bg-black/5 text-black/60 hover:text-black transition-colors shrink-0"
+                >
+                  <i className="bi bi-info-circle text-[15px]" />
+                </button>
+              </div>
+            </div>
+
+            {/* Chat Bubble Flow */}
+            <div className="flex-1 overflow-y-auto p-5.5 space-y-5 bg-white">
+              <AnimatePresence>
+                {messages.map((m) => {
+                  const isAI = m.sender === 'ai';
+                  return (
+                    <motion.div
+                      key={m.id}
+                      initial={{ opacity: 0, y: 12, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                      className={`flex items-start gap-3 ${isAI ? 'justify-start' : 'justify-end'}`}
+                    >
+                      {isAI && (
+                        <div 
+                          className="w-[32px] h-[32px] rounded-full flex items-center justify-center text-white text-[13px] flex-shrink-0 mt-0.5 shadow-md shadow-orange-500/10 border border-white/20"
+                          style={{ background: `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}dd 100%)` }}
+                        >
+                          <i className="bi bi-robot" />
+                        </div>
+                      )}
+                      
+                      <div className="max-w-[78%] space-y-1 text-left">
+                        <div 
+                          className={`px-4.5 py-3 rounded-2xl text-[13px] leading-relaxed whitespace-pre-line ${
+                            isAI 
+                              ? 'bg-[#e9e9eb] text-black border border-black/[0.01] shadow-sm rounded-tl-sm' 
+                              : 'text-white font-semibold shadow-md rounded-tr-sm'
+                          }`}
+                          style={!isAI ? { background: `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}dd 100%)` } : {}}
+                        >
+                          {m.text}
+                        </div>
+                        <span className={`text-[9px] font-black text-black/25 block ${!isAI ? 'text-right' : 'text-left'}`}>
+                          {m.time}
+                        </span>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+
+              {isTyping && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-3"
+                >
+                  <div 
+                    className="w-[32px] h-[32px] rounded-full flex items-center justify-center text-white text-[13px] flex-shrink-0 shadow-md shadow-orange-500/10 border border-white/20"
+                    style={{ background: `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}dd 100%)` }}
+                  >
+                    <i className="bi bi-robot" />
+                  </div>
+                  <div className="bg-[#e9e9eb] border border-black/[0.01] px-4.5 py-3 rounded-2xl rounded-tl-sm flex items-center gap-1.5 shadow-sm">
+                    <span className="w-1.5 h-1.5 rounded-full animate-bounce delay-0" style={{ backgroundColor: accentColor }} />
+                    <span className="w-1.5 h-1.5 rounded-full animate-bounce delay-[0.15s]" style={{ backgroundColor: accentColor }} />
+                    <span className="w-1.5 h-1.5 rounded-full animate-bounce delay-[0.3s]" style={{ backgroundColor: accentColor }} />
+                  </div>
+                </motion.div>
+              )}
+              
+              <div ref={scrollRef} />
+            </div>
+
+            {/* Quick Actions (Floating Pill prompts) */}
+            {activeDoc && (
+              <div className="px-5 py-2.5 border-t border-black/[0.04] flex gap-2.5 overflow-x-auto bg-[#fafafb] scrollbar-none z-15">
+                {[
+                  { icon: 'bi-card-text', text: 'Tóm tắt tài liệu', prompt: 'Tóm tắt lý thuyết cốt lõi tài liệu' },
+                  { icon: 'bi-question-circle', text: 'Tạo câu hỏi ôn tập', prompt: 'Tạo 3 câu hỏi ôn tập tự kiểm tra' },
+                  { icon: 'bi-book', text: 'Giải thích thuật ngữ', prompt: 'Giải thích các thuật ngữ chuyên ngành' },
+                ].map((act, i) => (
+                  <motion.button
+                    key={i}
+                    whileHover={{ scale: 1.03, backgroundColor: 'rgba(0,0,0,0.03)' }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => handleSendMessage(act.prompt)}
+                    className="px-3.5 py-1.5 rounded-full bg-white hover:bg-black/[0.02] border border-black/5 text-[11px] font-extrabold text-black/60 transition-all cursor-pointer flex-shrink-0 flex items-center gap-1.5 shadow-sm"
+                  >
+                    <i className={`bi ${act.icon}`} style={{ color: accentColor }} />
+                    {act.text}
+                  </motion.button>
+                ))}
+              </div>
+            )}
+
+            {/* High-End Floating iMessage Style Input Form */}
+            <div className="p-3.5 border-t border-black/[0.04] bg-white flex items-center gap-3.5">
+              <input
+                type="text"
+                placeholder={activeDoc ? "Hỏi trợ lý AI bất kỳ điều gì..." : "Vui lòng chọn tài liệu ở cột bên trái để trò chuyện..."}
+                value={inputVal}
+                onChange={(e) => setInputVal(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleSendMessage(); }}
+                disabled={!activeDoc}
+                className="flex-1 bg-[#f4f4f7] border border-black/[0.02] rounded-full px-5 py-2.5 text-black text-[13px] font-semibold placeholder-black/35 outline-none focus:border-black/[0.08] focus:bg-white transition-all disabled:opacity-40 shadow-inner"
+              />
+              <motion.button
+                whileHover={{ scale: 1.05, y: -0.5 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleSendMessage()}
+                disabled={!activeDoc || !inputVal.trim()}
+                className="w-[36px] h-[36px] rounded-full text-white flex items-center justify-center border-none shadow-md shadow-orange-500/10 cursor-pointer disabled:opacity-30 disabled:shadow-none transition-all flex-shrink-0"
+                style={{ background: `linear-gradient(135deg, ${accentColor} 0%, ${accentColor}dd 100%)` }}
+              >
+                <i className="bi bi-send-fill text-[13px]" />
+              </motion.button>
+            </div>
+          </div>
+
+          {/* Right Column: Dynamic Apple Inspector Inspector (lg:col-span-3) */}
+          <div className="hidden lg:flex lg:col-span-3 flex-col bg-white border border-black/[0.04] rounded-3xl p-4.5 shadow-sm h-full overflow-hidden">
+            {rightContent}
           </div>
 
         </div>
+
+        {/* Mobile Drawers */}
+        <Drawer
+          title={<span className="font-extrabold text-[14px]">Thư viện liên kết</span>}
+          placement="left"
+          onClose={() => setShowMobileFiles(false)}
+          open={showMobileFiles}
+          width={280}
+          styles={{ body: { padding: '16px', display: 'flex', flexDirection: 'column' } }}
+          className="lg:hidden"
+        >
+          {leftContent}
+        </Drawer>
+
+        <Drawer
+          title={<span className="font-extrabold text-[14px]">Thông tin bổ trợ</span>}
+          placement="right"
+          onClose={() => setShowMobileInspector(false)}
+          open={showMobileInspector}
+          width={280}
+          styles={{ body: { padding: '16px', display: 'flex', flexDirection: 'column' } }}
+          className="lg:hidden"
+        >
+          {rightContent}
+        </Drawer>
     </div>
   );
 }

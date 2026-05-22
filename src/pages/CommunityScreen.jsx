@@ -7,7 +7,14 @@ import { useState } from 'react';
 import { Button, Tag, Modal, Form, Select, message } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function CommunityScreen({ groups, searchTerm = '', onToggleJoin, onAddGroup }) {
+export default function CommunityScreen({ 
+  groups, 
+  searchTerm = '', 
+  currentUser,
+  onRequestJoin,
+  onViewDetail,
+  onAddGroup 
+}) {
   const [localSearch, setLocalSearch] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [form] = Form.useForm();
@@ -17,16 +24,20 @@ export default function CommunityScreen({ groups, searchTerm = '', onToggleJoin,
       id: 'grp_' + Date.now(),
       name: values.name,
       description: values.description,
+      category: values.subject,
       subject: values.subject,
-      members: '1 thành viên',
-      documentsCount: '0 giáo trình',
-      isJoined: true,
+      owner: currentUser,
+      members: [
+        { email: currentUser, role: 'leader', joinedAt: new Date().toISOString().split('T')[0] }
+      ],
+      pendingRequests: [],
+      documents: []
     };
 
     onAddGroup(newGroup);
     form.resetFields();
     setShowCreateModal(false);
-    message.success(`Đã khởi tạo thành công nhóm học tập "${values.name}"!`);
+    message.success(`Đã khởi tạo thành công nhóm học tập "${values.name}"! Bạn là Group Leader.`);
   };
 
   const finalSearchQuery = localSearch || searchTerm || '';
@@ -103,9 +114,9 @@ export default function CommunityScreen({ groups, searchTerm = '', onToggleJoin,
                   <div className="space-y-4">
                     <div className="flex justify-between items-start gap-2">
                       <Tag color="purple" className="font-bold text-[9px] uppercase rounded-full border-none px-2.5 py-0.5">
-                        {grp.subject}
+                        {grp.subject || grp.category}
                       </Tag>
-                      <span className="text-[12px] font-bold text-black/40"><i className="bi bi-people-fill mr-1 text-[#ff5c00]" /> {grp.members}</span>
+                      <span className="text-[12px] font-bold text-black/40"><i className="bi bi-people-fill mr-1 text-[#ff5c00]" /> {grp.members?.length || 0} thành viên</span>
                     </div>
                     <div className="text-left space-y-1.5">
                       <h4 className="text-[16px] font-extrabold text-black tracking-tight">{grp.name}</h4>
@@ -114,18 +125,50 @@ export default function CommunityScreen({ groups, searchTerm = '', onToggleJoin,
                   </div>
 
                   <div className="pt-4 border-t border-black/5 flex justify-between items-center mt-5">
-                    <span className="text-[11px] font-bold text-black/40"><i className="bi bi-folder2-open mr-1 text-[#ff5c00]" /> {grp.documentsCount}</span>
-                    <Button
-                      type={grp.isJoined ? 'default' : 'primary'}
-                      size="small"
-                      onClick={() => {
-                        onToggleJoin(grp.id);
-                        message.success(grp.isJoined ? 'Đã rời khỏi nhóm.' : `Chào mừng bạn tham gia "${grp.name}"!`);
-                      }}
-                      className="font-bold text-[11px] rounded-lg h-7.5 px-4"
-                    >
-                      {grp.isJoined ? 'Đã tham gia' : 'Tham gia'}
-                    </Button>
+                    <span className="text-[11px] font-bold text-black/40"><i className="bi bi-folder2-open mr-1 text-[#ff5c00]" /> {grp.documents?.length || 0} tài liệu</span>
+                    
+                    {(() => {
+                      const isOwner = grp.owner === currentUser;
+                      const isMember = grp.members?.some(m => m.email === currentUser);
+                      const isPending = grp.pendingRequests?.includes(currentUser);
+
+                      if (isOwner || isMember) {
+                        return (
+                          <Button
+                            type="default"
+                            size="small"
+                            onClick={() => onViewDetail(grp.id)}
+                            className="font-bold text-[11px] rounded-lg h-7.5 px-4"
+                          >
+                            Chi tiết
+                          </Button>
+                        );
+                      }
+                      if (isPending) {
+                        return (
+                          <Button
+                            disabled
+                            size="small"
+                            className="font-bold text-[11px] rounded-lg h-7.5 px-4"
+                          >
+                            Đang chờ duyệt
+                          </Button>
+                        );
+                      }
+                      return (
+                        <Button
+                          type="primary"
+                          size="small"
+                          onClick={() => {
+                            onRequestJoin(grp.id);
+                            message.success(`Đã gửi yêu cầu tham gia "${grp.name}". Vui lòng chờ Leader duyệt.`);
+                          }}
+                          className="font-bold text-[11px] rounded-lg h-7.5 px-4"
+                        >
+                          Gửi yêu cầu
+                        </Button>
+                      );
+                    })()}
                   </div>
                 </motion.div>
               ))}
@@ -181,7 +224,7 @@ export default function CommunityScreen({ groups, searchTerm = '', onToggleJoin,
         onCancel={() => setShowCreateModal(false)}
         footer={null}
         width={460}
-        destroyOnClose
+        destroyOnHidden
         centered
       >
         <div className="bg-[#fafafb] px-6 py-5 border-b border-black/5 text-black flex items-center gap-4 relative overflow-hidden">
@@ -212,7 +255,7 @@ export default function CommunityScreen({ groups, searchTerm = '', onToggleJoin,
             <Form.Item label={<span className="text-[10px] font-bold text-black/50 uppercase tracking-wider">Chuyên ngành học tập</span>} name="subject">
               <Select
                 className="font-semibold text-[13px]"
-                popupClassName="rounded-xl"
+                classNames={{ popup: "rounded-xl" }}
                 options={[
                   { value: 'KHOA HỌC MÁY TÍNH', label: 'Khoa học máy tính' },
                   { value: 'ĐẠI SỐ TUYẾN TÍNH', label: 'Đại số tuyến tính' },

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from '../components/Sidebar.jsx';
 import AppHeader from '../components/AppHeader.jsx';
@@ -22,11 +23,26 @@ export default function MainLayout({
   accentColor,
   children,
 }) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <div className="w-full min-h-screen bg-[#f5f5f7] text-[#1d1d1f] flex flex-row font-sans relative overflow-hidden grid-mesh animate-fade-in">
       {/* Background soft ambient lights */}
       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#ff5c00]/2 rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse duration-[8s]" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#007aff]/1 rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse duration-[10s]" />
+
+      {/* Mobile Backdrop Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden"
+          />
+        )}
+      </AnimatePresence>
 
       {/* Modern Bright Sidebar */}
       <Sidebar
@@ -39,10 +55,12 @@ export default function MainLayout({
         deletedDocsCount={deletedDocsCount}
         avatarUrl={avatarUrl}
         accentColor={accentColor}
+        isMobileMenuOpen={isMobileMenuOpen}
+        onCloseMobileMenu={() => setIsMobileMenuOpen(false)}
       />
 
       {/* Central Content Panel - Immersive & Premium */}
-      <div className="flex-1 flex flex-col h-screen max-h-screen ml-[260px] overflow-hidden relative z-10 bg-[#f5f5f7]">
+      <div className="flex-1 flex flex-col h-screen max-h-screen ml-0 md:ml-[260px] overflow-hidden relative z-10 bg-[#f5f5f7]">
         
         {/* App Header (Static at the top, conditionally hidden on settings/trash as requested) */}
         {!['profile', 'trash'].includes(currentView) && (
@@ -52,6 +70,7 @@ export default function MainLayout({
               onSearchChange={onSearchChange}
               avatarUrl={avatarUrl}
               accentColor={accentColor}
+              onToggleMobileMenu={() => setIsMobileMenuOpen(prev => !prev)}
             />
           </div>
         )}
