@@ -32,14 +32,18 @@ export default function AIScreen({
   ]);
   const [inputVal, setInputVal] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const scrollRef = useRef(null);
   const [searchFocused, setSearchFocused] = useState(false);
   const [showMobileFiles, setShowMobileFiles] = useState(false);
   const [showMobileInspector, setShowMobileInspector] = useState(false);
 
+  const scrollContainerRef = useRef(null);
+
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        top: scrollContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
     }
   }, [messages, isTyping]);
 
@@ -373,7 +377,7 @@ export default function AIScreen({
             </div>
 
             {/* Chat Bubble Flow */}
-            <div className="flex-1 overflow-y-auto p-5.5 space-y-5 bg-white">
+            <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-5.5 space-y-5 bg-white">
               <AnimatePresence>
                 {messages.map((m) => {
                   const isAI = m.sender === 'ai';
@@ -433,8 +437,6 @@ export default function AIScreen({
                   </div>
                 </motion.div>
               )}
-              
-              <div ref={scrollRef} />
             </div>
 
             {/* Quick Actions (Floating Pill prompts) */}

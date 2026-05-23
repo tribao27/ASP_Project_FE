@@ -62,18 +62,16 @@ export default function MainLayout({
       {/* Central Content Panel - Immersive & Premium */}
       <div className="flex-1 flex flex-col h-screen max-h-screen ml-0 md:ml-[260px] overflow-hidden relative z-10 bg-[#f5f5f7]">
         
-        {/* App Header (Static at the top, conditionally hidden on settings/trash as requested) */}
-        {!['profile', 'trash'].includes(currentView) && (
-          <div className="px-5 md:px-8 pt-5 pb-3 bg-[#f5f5f7] z-30 flex-shrink-0">
-            <AppHeader 
-              searchTerm={searchTerm} 
-              onSearchChange={onSearchChange}
-              avatarUrl={avatarUrl}
-              accentColor={accentColor}
-              onToggleMobileMenu={() => setIsMobileMenuOpen(prev => !prev)}
-            />
-          </div>
-        )}
+        {/* App Header (Static at the top) */}
+        <div className="px-5 md:px-8 pt-5 pb-3 bg-[#f5f5f7] z-30 flex-shrink-0">
+          <AppHeader 
+            searchTerm={searchTerm} 
+            onSearchChange={onSearchChange}
+            avatarUrl={avatarUrl}
+            accentColor={accentColor}
+            onToggleMobileMenu={() => setIsMobileMenuOpen(prev => !prev)}
+          />
+        </div>
 
         {/* Independent Page Viewport Container - The "Khung" (Frame) */}
         <div className="flex-1 overflow-hidden relative flex flex-col w-full h-full px-4 pb-4 pt-1">
