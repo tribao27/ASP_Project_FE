@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { ConfigProvider, App as AntApp } from 'antd';
 import { StyleProvider } from '@ant-design/cssinjs';
 import antdTheme from './theme/antdTheme.js';
-import { initialGroups } from './data';
+import groupService from './api/groupService.js';
 import useDocuments from './hooks/useDocuments.js';
 
 import IntroScreen from './pages/IntroScreen.jsx';
@@ -32,8 +32,20 @@ export default function App() {
   const [avatarUrl, setAvatarUrl] = useState('https://lh3.googleusercontent.com/aida-public/AB6AXuBow5mVfiNdaRBNOhUCDdCECelWMAJJIH-qphguPGLIXAfufQTeX5TZ1eZPJ2RfSdkXaqpdbdRwUwLhYiIolmk3c-psChGFWbL2n9oQPwS08-ynfA4bX-5j8Sgxl14-8lsQ9I6NnQy-uqdllZ9XeAPJTOidzr-LY7Xpd1_50olXILb8G_q9AznJwl2LlMupMfzTJViLVuvF-kYTH8HYBj56IAbsBVfAUq8LFA6TipGCkhC8NWRgYYa1dTJuQEBM2wBc6vdwKHvjv3o');
 
   const { documents, activeDoc, addDocument, removeDocument, selectActiveDoc } = useDocuments();
-  const [groups, setGroups] = useState(initialGroups);
+  const [groups, setGroups] = useState([]);
   const [currentGroupId, setCurrentGroupId] = useState(null);
+
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const data = await groupService.getAllGroups();
+        setGroups(data);
+      } catch (error) {
+        console.error("Failed to fetch groups:", error);
+      }
+    };
+    fetchGroups();
+  }, []);
 
   // Authentication protected navigation wrapper
   const handleNavigate = (view) => {

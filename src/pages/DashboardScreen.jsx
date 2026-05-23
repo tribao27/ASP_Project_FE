@@ -195,20 +195,7 @@ export default function DashboardScreen({
     },
   ];
 
-  const gridContainer = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08
-      }
-    }
-  };
-
-  const gridItem = {
-    hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } }
-  };
+  // Removed heavy Framer Motion variants
 
   return (
     <div className="flex-1 w-full h-full overflow-y-auto px-4 md:px-8 pb-10 pt-4 text-left select-none relative">
@@ -221,26 +208,22 @@ export default function DashboardScreen({
             <p className="text-[13px] text-black/50 mt-0.5 font-semibold">Quản lý và số hóa học phần học thuật cùng Trợ lý AI</p>
           </div>
           <div className="flex items-center gap-3">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+            <button
               onClick={() => setShowUploadModal(true)}
-              className="bg-gradient-to-r from-[#ff8a00] to-[#ff5c00] text-white rounded-xl font-bold text-[13px] px-4.5 py-2 flex items-center gap-1.5 shadow-lg orange-glow cursor-pointer"
+              className="bg-gradient-to-r from-[#ff8a00] to-[#ff5c00] text-white rounded-xl font-bold text-[13px] px-4.5 py-2 flex items-center gap-1.5 shadow-lg orange-glow cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-transform"
             >
               <i className="bi bi-cloud-arrow-up text-[14px]" /> Tải lên tài liệu
-            </motion.button>
+            </button>
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+            <button
               onClick={() => {
                 const name = prompt('Nhập tên thư mục mới:');
                 if (name) message.success(`Đã tạo thư mục "${name}"`);
               }}
-              className="bg-black/[0.01] border border-black/8 hover:border-black/20 text-black rounded-xl font-semibold text-[13px] px-4 py-2 flex items-center gap-1.5 cursor-pointer"
+              className="bg-black/[0.01] border border-black/8 hover:border-black/20 text-black rounded-xl font-semibold text-[13px] px-4 py-2 flex items-center gap-1.5 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-transform"
             >
               <i className="bi bi-folder-plus text-[14px] text-black/60" /> Tạo mục mới
-            </motion.button>
+            </button>
 
             <Segmented
               options={[
@@ -305,12 +288,10 @@ export default function DashboardScreen({
             const classes = tabColors[tab.value] || tabColors.all;
 
             return (
-              <motion.button
+              <button
                 key={tab.value}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
                 onClick={() => setActiveTab(tab.value)}
-                className={`px-4.5 py-2 rounded-full text-[12px] transition-all duration-200 flex items-center gap-2 cursor-pointer ${isActive ? classes.active : classes.inactive
+                className={`px-4.5 py-2 rounded-full text-[12px] transition-all duration-200 flex items-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-[0.97] ${isActive ? classes.active : classes.inactive
                   }`}
               >
                 <span>{tab.label}</span>
@@ -318,20 +299,17 @@ export default function DashboardScreen({
                   }`}>
                   {count}
                 </span>
-              </motion.button>
+              </button>
             );
           })}
         </div>
 
         {/* Main List content viewport */}
-        <AnimatePresence mode="wait">
+        <div className="flex-1 w-full flex flex-col relative animate-fade-in">
           {viewMode === 'list' ? (
-            <motion.div
+            <div
               key="list-view"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              className="premium-glass rounded-2xl border border-black/5 p-2 shadow-sm overflow-x-auto flex-1"
+              className="premium-glass rounded-2xl border border-black/5 p-2 shadow-sm overflow-x-auto flex-1 animate-fade-in"
             >
               <Table
                 className="min-w-[600px]"
@@ -346,20 +324,16 @@ export default function DashboardScreen({
                 locale={{ emptyText: <span className="text-black/35 text-[12.5px] font-semibold py-8 block text-center">Thư mục trống</span> }}
                 size="middle"
               />
-            </motion.div>
+            </div>
           ) : (
-            <motion.div
+            <div
               key="grid-view"
-              variants={gridContainer}
-              initial="hidden"
-              animate="show"
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 flex-1"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 flex-1 animate-fade-in"
             >
               {filteredDocs.map((doc) => (
-                <motion.div
+                <div
                   key={doc.id}
-                  variants={gridItem}
-                  className="bg-white rounded-2xl border border-black/5 p-5 shadow-sm flex flex-col justify-between group overflow-hidden relative hover-card-depth cursor-pointer"
+                  className="bg-white rounded-2xl border border-black/5 p-5 shadow-sm flex flex-col justify-between group overflow-hidden relative hover-card-depth cursor-pointer transition-transform duration-300 hover:-translate-y-1"
                 >
                   <div className="space-y-4">
                     <div className="flex items-start justify-between gap-2">
@@ -402,11 +376,11 @@ export default function DashboardScreen({
                       <i className="bi bi-chat-dots mr-1" /> Hỏi AI
                     </Button>
                   </div>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
+        </div>
 
         {/* Floating Draggable AI Assistant with glowing ring */}
         <div

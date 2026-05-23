@@ -48,32 +48,14 @@ export default function CommunityScreen({
     );
   });
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } }
-  };
+  // Removed heavy Framer Motion variants
 
   return (
     <div className="flex-1 w-full h-full overflow-y-auto px-4 md:px-8 pb-10 pt-4 text-left select-none relative">
       <div>
         
         {/* Banner hero header component */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-8 p-6 md:p-8 rounded-3xl bg-gradient-to-r from-[#ff8a00] to-[#ff5c00] text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xl relative overflow-hidden orange-glow"
-        >
+        <div className="mb-8 p-6 md:p-8 rounded-3xl bg-gradient-to-r from-[#ff8a00] to-[#ff5c00] text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xl relative overflow-hidden orange-glow animate-fade-in">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
           <div className="text-left space-y-2 relative z-10 max-w-xl">
             <span className="text-[10px] font-extrabold uppercase tracking-widest text-white/70 bg-white/10 px-3 py-1 rounded-full inline-block">Mạng xã hội học thuật</span>
@@ -82,15 +64,13 @@ export default function CommunityScreen({
               Khám phá hàng chục nhóm thảo luận chuyên môn đại học. Tải lên giáo trình của bạn để hỗ trợ đồng đội giải quyết bài tập nhóm.
             </p>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.03, backgroundColor: '#ffffff' }}
-            whileTap={{ scale: 0.97 }}
+          <button
             onClick={() => setShowCreateModal(true)}
-            className="bg-white text-black font-extrabold text-[13px] rounded-xl px-6 py-3 cursor-pointer shadow-lg hover:bg-white/95"
+            className="bg-white text-black font-extrabold text-[13px] rounded-xl px-6 py-3 cursor-pointer shadow-lg transition-transform duration-300 hover:scale-[1.03] hover:bg-white/95 active:scale-[0.97]"
           >
             Tạo nhóm thảo luận
-          </motion.button>
-        </motion.div>
+          </button>
+        </div>
 
         {/* Main Grid View */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
@@ -99,17 +79,11 @@ export default function CommunityScreen({
           <div className="lg:col-span-8 space-y-4">
             <span className="text-[10px] font-bold text-black/40 uppercase tracking-widest block text-left">Danh sách nhóm thảo luận</span>
             
-            <motion.div 
-              variants={containerVariants}
-              initial="hidden"
-              animate="show"
-              className="grid grid-cols-1 sm:grid-cols-2 gap-6"
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 animate-fade-in">
               {filteredGroups.map((grp) => (
-                <motion.div
+                <div
                   key={grp.id}
-                  variants={itemVariants}
-                  className="bg-white border border-black/5 hover:border-[#ff5c00]/30 rounded-3xl p-5 shadow-sm flex flex-col justify-between hover-card-depth cursor-pointer overflow-hidden relative"
+                  className="bg-white border border-black/5 hover:border-[#ff5c00]/30 rounded-3xl p-5 shadow-sm flex flex-col justify-between hover-card-depth cursor-pointer overflow-hidden relative transition-transform duration-300 hover:-translate-y-1"
                 >
                   <div className="space-y-4">
                     <div className="flex justify-between items-start gap-2">
@@ -156,23 +130,23 @@ export default function CommunityScreen({
                         );
                       }
                       return (
-                        <Button
-                          type="primary"
-                          size="small"
-                          onClick={() => {
-                            onRequestJoin(grp.id);
-                            message.success(`Đã gửi yêu cầu tham gia "${grp.name}". Vui lòng chờ Leader duyệt.`);
-                          }}
-                          className="font-bold text-[11px] rounded-lg h-7.5 px-4"
-                        >
-                          Gửi yêu cầu
-                        </Button>
+                          <Button
+                            type="primary"
+                            size="small"
+                            onClick={() => {
+                              onRequestJoin(grp.id);
+                              message.success(`Đã gửi yêu cầu tham gia "${grp.name}". Vui lòng chờ Leader duyệt.`);
+                            }}
+                            className="font-bold text-[11px] rounded-lg h-7.5 px-4"
+                          >
+                            Gửi yêu cầu
+                          </Button>
                       );
                     })()}
                   </div>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           </div>
 
           {/* Metrics panel (lg:col-span-4) */}

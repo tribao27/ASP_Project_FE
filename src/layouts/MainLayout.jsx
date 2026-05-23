@@ -78,18 +78,12 @@ export default function MainLayout({
         {/* Independent Page Viewport Container - The "Khung" (Frame) */}
         <div className="flex-1 overflow-hidden relative flex flex-col w-full h-full px-4 pb-4 pt-1">
           <div className="flex-1 bg-white/60 backdrop-blur-3xl rounded-[28px] border border-black/[0.04] shadow-sm overflow-hidden relative flex flex-col ring-1 ring-white/50">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentView}
-                initial={{ opacity: 0, scale: 0.98, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.98, y: -10 }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="flex-1 flex flex-col w-full h-full overflow-hidden"
-              >
-                {children}
-              </motion.div>
-            </AnimatePresence>
+            <div
+              key={currentView}
+              className="flex-1 flex flex-col w-full h-full overflow-hidden animate-fade-in"
+            >
+              {children}
+            </div>
           </div>
         </div>
 
