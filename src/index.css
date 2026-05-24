@@ -99,6 +99,48 @@
   100% { background-position: 0% 50%; }
 }
 
+/* Sidebar Collapse/Expand Transition */
+.sidebar-transition {
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              margin-left 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              padding 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sidebar-text-fade {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes gentlePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-gentle-pulse {
+  animation: gentlePulse 3s ease-in-out infinite;
+}
+
 /* Clean bright background grids and glows */
 .grid-mesh {
   background-color: #fafafb;
@@ -128,6 +170,15 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.16);
   border-radius: 10px;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 
 /* Custom interactive classes */
@@ -216,6 +267,27 @@
 .ant-select-item-option-selected {
   background-color: rgba(255, 92, 0, 0.08) !important;
   color: #ff5c00 !important;
+}
+
+/* Responsive table overflow for mobile */
+@media (max-width: 768px) {
+  .ant-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ant-table {
+    min-width: 600px;
+  }
+  .ant-modal {
+    max-width: calc(100vw - 32px) !important;
+    margin: 16px auto !important;
+  }
+  .ant-modal .ant-modal-content {
+    border-radius: 16px !important;
+  }
+  .ant-drawer .ant-drawer-content-wrapper {
+    max-width: 85vw !important;
+  }
 }
 
 /* Dynamic Accent Styles mapping from --color-primary */

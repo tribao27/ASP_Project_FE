@@ -7,8 +7,10 @@ import { useState, useEffect } from 'react';
 import { Table, Button, Tag, Modal, Form, Select, Upload, Tooltip, message, Segmented } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 import FileIcon from '../components/FileIcon.jsx';
+import DocumentViewer from '../components/DocumentViewer.jsx';
 import { getFileTagColor, getFileTypeLabel, detectFileType } from '../utils/helpers.js';
 import { TAB_OPTIONS, UPLOAD_TYPE_OPTIONS } from '../data';
+import { formatRelativeTime } from '../utils/dateUtils';
 
 const { Dragger } = Upload;
 
@@ -25,6 +27,7 @@ export default function DashboardScreen({
   const [activeTab, setActiveTab] = useState('all');
   const [viewMode, setViewMode] = useState('list');
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [previewDoc, setPreviewDoc] = useState(null);
   const [form] = Form.useForm();
 
   // Draggable floating assistant state
@@ -102,7 +105,7 @@ export default function DashboardScreen({
     const newDoc = {
       id: 'doc_' + Date.now(),
       name: finalName,
-      uploadedAt: 'Hôm nay, ' + new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+      uploadedAt: new Date().toISOString(),
       size: values.size || '2.0 MB',
       type: values.type,
       content: values.content || `Nội dung mô phỏng chi tiết cho tài liệu học tập của ${finalName}.`,
@@ -129,7 +132,7 @@ export default function DashboardScreen({
           <FileIcon type={record.type} />
           <span
             className="font-semibold text-black hover:text-[#ff5c00] transition-colors cursor-pointer text-[13px] tracking-tight"
-            onClick={() => handleAskAIOnDoc(record)}
+            onClick={() => setPreviewDoc(record)}
           >
             {text}
           </span>
@@ -153,6 +156,7 @@ export default function DashboardScreen({
       key: 'uploadedAt',
       width: 180,
       className: 'text-[12.5px] text-black/55 font-medium',
+      render: (val) => formatRelativeTime(val),
     },
     {
       title: 'Dung lượng',
@@ -198,19 +202,19 @@ export default function DashboardScreen({
   // Removed heavy Framer Motion variants
 
   return (
-    <div className="flex-1 w-full h-full overflow-y-auto px-4 md:px-8 pb-10 pt-4 text-left select-none relative">
+    <div className="flex-1 w-full h-full overflow-y-auto px-3 sm:px-4 md:px-8 pb-10 pt-3 sm:pt-4 text-left select-none relative">
       <div>
 
         {/* Title + Action bar */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-5 sm:mb-6">
           <div>
-            <h2 className="text-[23px] font-extrabold text-[#1d1d1f] tracking-tight">Thư viện của tôi</h2>
-            <p className="text-[13px] text-black/50 mt-0.5 font-semibold">Quản lý và số hóa học phần học thuật cùng Trợ lý AI</p>
+            <h2 className="text-[20px] sm:text-[23px] font-extrabold text-[#1d1d1f] tracking-tight">Thư viện của tôi</h2>
+            <p className="text-[12px] sm:text-[13px] text-black/50 mt-0.5 font-semibold">Quản lý và số hóa học phần học thuật cùng Trợ lý AI</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <button
               onClick={() => setShowUploadModal(true)}
-              className="bg-gradient-to-r from-[#ff8a00] to-[#ff5c00] text-white rounded-xl font-bold text-[13px] px-4.5 py-2 flex items-center gap-1.5 shadow-lg orange-glow cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-transform"
+              className="bg-gradient-to-r from-[#ff8a00] to-[#ff5c00] text-white rounded-xl font-bold text-[12px] sm:text-[13px] px-3.5 sm:px-4.5 py-2 flex items-center gap-1.5 shadow-lg orange-glow cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-transform"
             >
               <i className="bi bi-cloud-arrow-up text-[14px]" /> Tải lên tài liệu
             </button>
@@ -238,7 +242,7 @@ export default function DashboardScreen({
         </div>
 
         {/* Categories / Filter tabs */}
-        <div className="mb-6 flex flex-wrap gap-2.5">
+        <div className="mb-5 sm:mb-6 flex flex-wrap gap-2">
           {TAB_OPTIONS.map((tab) => {
             const count = tab.value === 'all'
               ? documents.length
@@ -328,7 +332,7 @@ export default function DashboardScreen({
           ) : (
             <div
               key="grid-view"
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 flex-1 animate-fade-in"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 flex-1 animate-fade-in"
             >
               {filteredDocs.map((doc) => (
                 <div
@@ -354,7 +358,7 @@ export default function DashboardScreen({
                         <i className="bi bi-trash3" />
                       </Button>
                     </div>
-                    <div className="flex gap-3 items-center" onClick={() => handleAskAIOnDoc(doc)}>
+                    <div className="flex gap-3 items-center cursor-pointer" onClick={() => setPreviewDoc(doc)}>
                       <FileIcon type={doc.type} />
                       <h4 className="font-semibold text-[14.5px] text-black tracking-tight line-clamp-1 group-hover:text-[#ff5c00] transition-colors">{doc.name}</h4>
                     </div>
@@ -364,7 +368,7 @@ export default function DashboardScreen({
                   </div>
                   <div className="pt-3.5 border-t border-black/5 flex justify-between items-center mt-4">
                     <div className="text-[11px] text-black/40 font-semibold space-y-0.5">
-                      <p>{doc.uploadedAt}</p>
+                      <p>{formatRelativeTime(doc.uploadedAt)}</p>
                       <p>{doc.size}</p>
                     </div>
                     <Button
@@ -386,8 +390,8 @@ export default function DashboardScreen({
         <div
           className="fixed z-50 touch-none select-none"
           style={{
-            bottom: '40px',
-            right: '40px',
+            bottom: '24px',
+            right: '24px',
             transform: `translate(${position.x}px, ${position.y}px)`,
             transition: isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)',
           }}
@@ -400,7 +404,7 @@ export default function DashboardScreen({
                 const moved = Math.abs(position.x - offsetStart.x) > 8 || Math.abs(position.y - offsetStart.y) > 8;
                 if (!moved) onNavigate('ai');
               }}
-              className={`w-[54px] h-[54px] bg-gradient-to-tr from-[#ff8a00] to-[#ff5c00] text-white rounded-full flex items-center justify-center border-2 border-white/20 shadow-2xl orange-glow hover:scale-105 active:scale-95 transition-all cursor-grab active:cursor-grabbing ${isDragging ? 'scale-110 shadow-2xl ring-4 ring-[#ff5c00]/30' : ''
+              className={`w-[48px] h-[48px] sm:w-[54px] sm:h-[54px] bg-gradient-to-tr from-[#ff8a00] to-[#ff5c00] text-white rounded-full flex items-center justify-center border-2 border-white/20 shadow-2xl orange-glow hover:scale-105 active:scale-95 transition-all cursor-grab active:cursor-grabbing ${isDragging ? 'scale-110 shadow-2xl ring-4 ring-[#ff5c00]/30' : ''
                 }`}
             >
               <i className={`bi bi-stars text-[22px] ${isDragging ? 'animate-pulse' : 'animate-bounce duration-[3s]'}`} />
@@ -408,6 +412,18 @@ export default function DashboardScreen({
           </Tooltip>
         </div>
       </div>
+
+      {/* Document Viewer Modal */}
+      <DocumentViewer
+        document={previewDoc}
+        open={!!previewDoc}
+        onClose={() => setPreviewDoc(null)}
+        onAskAI={handleAskAIOnDoc}
+        onDelete={(docId) => {
+          onRemoveDocument(docId);
+          message.success('Đã chuyển tài liệu vào Thùng rác.');
+        }}
+      />
 
       {/* Upload Modal (Premium Glassmorphism) */}
       <Modal

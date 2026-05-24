@@ -105,14 +105,14 @@ export default function TrashScreen({
   ];
 
   return (
-    <div className="flex-1 w-full h-full overflow-y-auto px-4 md:px-8 pb-10 pt-4 text-left select-none relative bg-transparent">
+    <div className="flex-1 w-full h-full overflow-y-auto px-3 sm:px-4 md:px-8 pb-10 pt-3 sm:pt-4 text-left select-none relative bg-transparent">
       <div>
         
         {/* Title bar */}
         <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h2 className="text-2xl font-black text-[#1d1d1f]">Thùng rác tài nguyên</h2>
-            <p className="text-xs text-black/40 mt-0.5 font-semibold">
+            <h2 className="text-xl sm:text-2xl font-black text-[#1d1d1f]">Thùng rác tài nguyên</h2>
+            <p className="text-[11px] sm:text-xs text-black/40 mt-0.5 font-semibold">
               Quản trị phục hồi các tệp đã xóa tạm thời hoặc dọn sạch tài nguyên lưu trữ của bạn
             </p>
           </div>
@@ -143,7 +143,7 @@ export default function TrashScreen({
 
         {/* Content table view */}
         {deletedDocs.length > 0 ? (
-          <div className="bg-white rounded-3xl border border-black/[0.04] p-3.5 shadow-sm overflow-hidden flex-1 animate-scale-up">
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-black/[0.04] p-2.5 sm:p-3.5 shadow-sm overflow-hidden flex-1 animate-scale-up">
             <Table
               columns={columns}
               dataSource={deletedDocs}
@@ -158,7 +158,7 @@ export default function TrashScreen({
             />
           </div>
         ) : (
-          <div className="flex-1 bg-white rounded-[2.5rem] border border-black/[0.04] p-16 shadow-sm flex flex-col items-center justify-center text-center animate-scale-up">
+          <div className="flex-1 bg-white rounded-2xl sm:rounded-[2.5rem] border border-black/[0.04] p-8 sm:p-16 shadow-sm flex flex-col items-center justify-center text-center animate-scale-up">
             <Empty
               image={
                 <div className="w-20 h-20 rounded-3xl bg-[#ffedd5]/40 flex items-center justify-center text-[#ff8a00] border border-[#ff8a00]/10 mx-auto shadow-inner relative">

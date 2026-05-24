@@ -315,8 +315,8 @@ export default function AIScreen({
   );
 
   return (
-    <div className="flex-1 w-full h-full overflow-hidden text-left p-4 md:p-6 flex flex-col relative select-none bg-transparent">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 items-stretch overflow-hidden">
+    <div className="flex-1 w-full h-full overflow-hidden text-left p-2 sm:p-4 md:p-6 flex flex-col relative select-none bg-transparent">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 lg:gap-6 flex-1 items-stretch overflow-hidden">
           
           {/* Left Column: Finder-like Side Inspector (lg:col-span-3) */}
           <div className="hidden lg:flex lg:col-span-3 flex-col bg-white border border-black/[0.04] rounded-3xl p-4.5 shadow-sm h-full overflow-hidden">

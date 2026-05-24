@@ -4,70 +4,11 @@
  */
 
 import { useState } from 'react';
-import { Badge, Popover } from 'antd';
+import { Badge, Popover, Tooltip } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MOCK_NOTIFICATIONS, OLDER_NOTIFICATIONS } from '../data/mockData';
+import { formatRelativeTime } from '../utils/dateUtils';
 
-const MOCK_NOTIFICATIONS = [
-  {
-    id: 1,
-    title: 'Tài liệu "Giải tích 1" đã được AI phân tích xong',
-    time: '5 phút trước',
-    isRead: false,
-    icon: 'bi-check2-circle text-[#32d74b]',
-    bg: 'bg-[#32d74b]/10'
-  },
-  {
-    id: 2,
-    title: 'Nguyễn Văn A vừa yêu cầu tham gia nhóm "Luyện thi TOEIC"',
-    time: '2 giờ trước',
-    isRead: false,
-    icon: 'bi-person-plus text-[#007aff]',
-    bg: 'bg-[#007aff]/10'
-  },
-  {
-    id: 3,
-    title: 'Hệ thống sẽ bảo trì vào 23:00 tối nay',
-    time: '1 ngày trước',
-    isRead: true,
-    icon: 'bi-info-circle text-[#ff8a00]',
-    bg: 'bg-[#ff8a00]/10'
-  }
-];
-
-const OLDER_NOTIFICATIONS = [
-  {
-    id: 4,
-    title: 'Trợ lý AI đã tóm tắt xong 50 trang tài liệu "Triết học Mác-Lênin"',
-    time: '2 ngày trước',
-    isRead: true,
-    icon: 'bi-file-earmark-text text-[#007aff]',
-    bg: 'bg-[#007aff]/10'
-  },
-  {
-    id: 5,
-    title: 'Nhóm "Đồ án Tốt nghiệp" vừa tải lên 3 tài liệu mới',
-    time: '3 ngày trước',
-    isRead: true,
-    icon: 'bi-cloud-arrow-up text-[#ff5c00]',
-    bg: 'bg-[#ff5c00]/10'
-  },
-  {
-    id: 6,
-    title: 'Dung lượng lưu trữ của bạn sắp đầy (Đã dùng 95%)',
-    time: '4 ngày trước',
-    isRead: true,
-    icon: 'bi-exclamation-triangle text-[#ff3b30]',
-    bg: 'bg-[#ff3b30]/10'
-  },
-  {
-    id: 7,
-    title: 'Bạn đã đạt mốc 10.000 điểm cống hiến cộng đồng!',
-    time: '1 tuần trước',
-    isRead: true,
-    icon: 'bi-trophy text-[#ffd60a]',
-    bg: 'bg-[#ffd60a]/10'
-  }
-];
 
 /**
  * Shared Header Toolbar — Ultra-Premium Minimalist Stripe/Linear style.
@@ -80,6 +21,7 @@ export default function AppHeader({
   avatarUrl,
   accentColor = '#ff5c00',
   onToggleMobileMenu,
+  onNavigate,
   children,
 }) {
   const [isFocused, setIsFocused] = useState(false);
@@ -130,7 +72,7 @@ export default function AppHeader({
                   {noti.title}
                 </p>
                 <p className="text-[10px] font-bold text-black/30 uppercase tracking-widest mt-1">
-                  {noti.time}
+                  {formatRelativeTime(noti.time)}
                 </p>
               </div>
               {!noti.isRead && (
@@ -263,20 +205,23 @@ export default function AppHeader({
         <div className="h-4.5 w-[1.5px] bg-black/[0.06] mx-0.5" />
 
         {/* Premium Double Ringed Circular Profile Avatar */}
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="w-8.5 h-8.5 rounded-full overflow-hidden shadow-sm flex items-center justify-center bg-white cursor-pointer relative p-[1.5px] transition-all"
-          style={{ border: `1.5px solid ${accentColor}30` }}
-        >
-          <div className="w-full h-full rounded-full overflow-hidden">
-            <img 
-              src={avatarUrl} 
-              alt="Avatar" 
-              className="w-full h-full object-cover" 
-            />
-          </div>
-        </motion.div>
+        <Tooltip title="Cài đặt hệ thống" placement="bottom">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onNavigate && onNavigate('profile')}
+            className="w-8.5 h-8.5 rounded-full overflow-hidden shadow-sm flex items-center justify-center bg-white cursor-pointer relative p-[1.5px] transition-all"
+            style={{ border: `1.5px solid ${accentColor}30` }}
+          >
+            <div className="w-full h-full rounded-full overflow-hidden">
+              <img 
+                src={avatarUrl} 
+                alt="Avatar" 
+                className="w-full h-full object-cover" 
+              />
+            </div>
+          </motion.div>
+        </Tooltip>
       </div>
     </motion.header>
   );

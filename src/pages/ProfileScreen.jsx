@@ -48,23 +48,23 @@ export default function ProfileScreen({
   ];
 
   return (
-    <div className="flex-1 w-full h-full overflow-y-auto px-4 md:px-8 pb-10 pt-4 text-left select-none relative bg-transparent">
+    <div className="flex-1 w-full h-full overflow-y-auto px-3 sm:px-4 md:px-8 pb-10 pt-3 sm:pt-4 text-left select-none relative bg-transparent">
       <div>
         
         {/* Title Block */}
         <div className="mb-6 flex justify-between items-center">
           <div>
-            <h2 className="text-2xl font-black text-[#1d1d1f]">Cấu hình hệ thống</h2>
-            <p className="text-xs text-black/40 mt-0.5 font-semibold">
+            <h2 className="text-xl sm:text-2xl font-black text-[#1d1d1f]">Cấu hình hệ thống</h2>
+            <p className="text-[11px] sm:text-xs text-black/40 mt-0.5 font-semibold">
               Tùy chỉnh định danh số học thuật, thay đổi màu chủ đạo và thiết lập ảnh đại diện
             </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
           
           {/* Left Column: Premium ID & Avatar (lg:col-span-5) */}
-          <div className="lg:col-span-5 flex flex-col gap-6 justify-start">
+          <div className="lg:col-span-5 flex flex-col gap-4 sm:gap-6 justify-start">
             
             {/* Avatar Uploader Glass Panel */}
             <div className="bg-white rounded-3xl border border-black/[0.04] p-5.5 shadow-sm text-left">
@@ -200,7 +200,7 @@ export default function ProfileScreen({
           </div>
 
           {/* Right Column: Premium Form inputs & Details (lg:col-span-7) */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-7 space-y-4 sm:space-y-6">
             
             {/* Gamified study streak indicator to make web alive */}
             <div className="bg-gradient-to-r from-[#ff8a00]/4 to-[#ff5c00]/4 rounded-3xl border border-[#ff5c00]/10 p-5.5 text-left relative overflow-hidden flex items-center justify-between gap-6 shadow-sm group">
@@ -225,7 +225,7 @@ export default function ProfileScreen({
             </div>
 
             {/* System Config Input Form Container */}
-            <div className="bg-white rounded-3xl border border-black/[0.04] p-6 md:p-7 shadow-sm text-left space-y-5.5">
+            <div className="bg-white rounded-2xl sm:rounded-3xl border border-black/[0.04] p-5 sm:p-6 md:p-7 shadow-sm text-left space-y-4 sm:space-y-5.5">
               <span className="text-[10px] font-black text-black/35 uppercase tracking-widest block border-b border-black/[0.02] pb-2">
                 Thông tin định danh người dùng
               </span>

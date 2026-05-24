@@ -18,6 +18,9 @@ import AIScreen from './pages/AIScreen.jsx';
 import CommunityScreen from './pages/CommunityScreen.jsx';
 import GroupDetailScreen from './pages/GroupDetailScreen.jsx';
 import ProfileScreen from './pages/ProfileScreen.jsx';
+import PaymentScreen from './pages/PaymentScreen.jsx';
+import AdminScreen from './pages/AdminScreen.jsx';
+import AdminLoginScreen from './pages/AdminLoginScreen.jsx';
 import TrashScreen from './pages/TrashScreen.jsx';
 import MainLayout from './layouts/MainLayout.jsx';
 
@@ -26,6 +29,7 @@ export default function App() {
   const location = useLocation();
 
   const [currentUser, setCurrentUser] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
   const [deletedDocuments, setDeletedDocuments] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [accentColor, setAccentColor] = useState('#ff5c00');
@@ -60,12 +64,15 @@ export default function App() {
       'ai': '/ai',
       'community': '/community',
       'profile': '/profile',
-      'trash': '/trash'
+      'trash': '/trash',
+      'payment': '/payment',
+      'admin-login': '/admin/login',
+      'admin-dashboard': '/admin'
     };
 
-    const isPublicView = ['landing', 'login', 'register'].includes(view);
+    const isPublicView = ['landing', 'login', 'register', 'admin-login'].includes(view);
     
-    if (!currentUser && !isPublicView) {
+    if (!currentUser && !isAdmin && !isPublicView) {
       navigate('/login');
     } else {
       navigate(pathMap[view] || '/');
@@ -75,12 +82,23 @@ export default function App() {
   // Auth callbacks
   const handleLoginSuccess = (email) => {
     setCurrentUser(email);
+    setIsAdmin(false);
     navigate('/dashboard');
+  };
+
+  const handleAdminLoginSuccess = () => {
+    setIsAdmin(true);
+    navigate('/admin');
   };
 
   const handleLogout = () => {
     setCurrentUser('');
     navigate('/');
+  };
+
+  const handleAdminLogout = () => {
+    setIsAdmin(false);
+    navigate('/admin/login');
   };
 
   // Document custom deletion and restoration flows
@@ -168,11 +186,14 @@ export default function App() {
     if (path.startsWith('/community')) return 'community';
     if (path.startsWith('/profile')) return 'profile';
     if (path.startsWith('/trash')) return 'trash';
+    if (path.startsWith('/payment')) return 'payment';
+    if (path === '/admin/login') return 'admin-login';
+    if (path.startsWith('/admin')) return 'admin-dashboard';
     return 'landing';
   };
 
   const currentView = getCurrentViewFromPath();
-  const isSidebarVisible = ['dashboard', 'ai', 'community', 'profile', 'trash'].includes(currentView);
+  const isSidebarVisible = ['dashboard', 'ai', 'community', 'profile', 'trash', 'payment'].includes(currentView);
 
   const pageContent = (
     <Routes>
@@ -239,12 +260,24 @@ export default function App() {
           }}
         />
       } />
+      <Route path="/payment" element={
+        <PaymentScreen
+          accentColor={accentColor}
+          onNavigate={handleNavigate}
+        />
+      } />
       <Route path="/trash" element={
         <TrashScreen
           deletedDocs={deletedDocuments}
           onRestoreDoc={handleRestoreDocument}
           onPermanentlyDeleteDoc={handlePermanentlyDeleteDocument}
         />
+      } />
+      <Route path="/admin/login" element={
+        isAdmin ? <Navigate to="/admin" replace /> : <AdminLoginScreen onLoginSuccess={handleAdminLoginSuccess} />
+      } />
+      <Route path="/admin" element={
+        isAdmin ? <AdminScreen onLogout={handleAdminLogout} /> : <Navigate to="/admin/login" replace />
       } />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
@@ -276,6 +309,7 @@ export default function App() {
                 onSearchChange={setSearchTerm}
                 avatarUrl={avatarUrl}
                 accentColor={accentColor}
+                isAdmin={isAdmin}
               >
                 {pageContent}
               </MainLayout>

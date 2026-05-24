@@ -51,16 +51,16 @@ export default function CommunityScreen({
   // Removed heavy Framer Motion variants
 
   return (
-    <div className="flex-1 w-full h-full overflow-y-auto px-4 md:px-8 pb-10 pt-4 text-left select-none relative">
+    <div className="flex-1 w-full h-full overflow-y-auto px-3 sm:px-4 md:px-8 pb-10 pt-3 sm:pt-4 text-left select-none relative">
       <div>
         
         {/* Banner hero header component */}
-        <div className="mb-8 p-6 md:p-8 rounded-3xl bg-gradient-to-r from-[#ff8a00] to-[#ff5c00] text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xl relative overflow-hidden orange-glow animate-fade-in">
+        <div className="mb-6 sm:mb-8 p-5 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#ff8a00] to-[#ff5c00] text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sm:gap-6 shadow-xl relative overflow-hidden orange-glow animate-fade-in">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
           <div className="text-left space-y-2 relative z-10 max-w-xl">
             <span className="text-[10px] font-extrabold uppercase tracking-widest text-white/70 bg-white/10 px-3 py-1 rounded-full inline-block">Mạng xã hội học thuật</span>
-            <h3 className="text-[20px] md:text-[24px] font-extrabold tracking-tight">Cộng đồng chia sẻ & Đồng hành thi cử</h3>
-            <p className="text-[12.5px] text-white/80 font-semibold leading-relaxed">
+            <h3 className="text-[18px] sm:text-[20px] md:text-[24px] font-extrabold tracking-tight">Cộng đồng chia sẻ & Đồng hành thi cử</h3>
+            <p className="text-[11.5px] sm:text-[12.5px] text-white/80 font-semibold leading-relaxed">
               Khám phá hàng chục nhóm thảo luận chuyên môn đại học. Tải lên giáo trình của bạn để hỗ trợ đồng đội giải quyết bài tập nhóm.
             </p>
           </div>
@@ -73,13 +73,13 @@ export default function CommunityScreen({
         </div>
 
         {/* Main Grid View */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 lg:gap-8 items-stretch">
           
           {/* Group Grid (lg:col-span-8) */}
           <div className="lg:col-span-8 space-y-4">
             <span className="text-[10px] font-bold text-black/40 uppercase tracking-widest block text-left">Danh sách nhóm thảo luận</span>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 animate-fade-in">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 animate-fade-in">
               {filteredGroups.map((grp) => (
                 <div
                   key={grp.id}
