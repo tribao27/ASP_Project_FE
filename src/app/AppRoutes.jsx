@@ -4,6 +4,7 @@ import { useAppContext } from './context/AppContext.jsx';
 
 import IntroScreen from '@/features/landing/pages/IntroScreen.jsx';
 import LoginScreen from '@/features/auth/pages/LoginScreen.jsx';
+import ForgotPasswordScreen from '@/features/auth/pages/ForgotPasswordScreen.jsx';
 import DashboardScreen from '@/features/dashboard/pages/DashboardScreen.jsx';
 import AIScreen from '@/features/ai/pages/AIScreen.jsx';
 import CommunityScreen from '@/features/community/pages/CommunityScreen.jsx';
@@ -11,7 +12,7 @@ import GroupDetailScreen from '@/features/group-detail/pages/GroupDetailScreen.j
 import ProfileScreen from '@/features/profile/pages/ProfileScreen.jsx';
 import PaymentScreen from '@/features/payment/pages/PaymentScreen.jsx';
 import AdminScreen from '@/features/admin/pages/AdminScreen.jsx';
-import AdminLoginScreen from '@/features/admin/pages/AdminLoginScreen.jsx';
+
 import TrashScreen from '@/features/trash/pages/TrashScreen.jsx';
 import MainLayout from '@/shared/layouts/MainLayout.jsx';
 
@@ -30,8 +31,9 @@ export default function AppRoutes() {
   const pageContent = (
     <Routes>
       <Route path="/" element={<IntroScreen onNavigate={handleNavigate} />} />
-      <Route path="/login" element={<LoginScreen onLoginSuccess={handleLoginSuccess} onNavigate={handleNavigate} currentView="login" />} />
-      <Route path="/register" element={<LoginScreen onLoginSuccess={handleLoginSuccess} onNavigate={handleNavigate} currentView="register" />} />
+      <Route path="/login" element={<LoginScreen onLoginSuccess={handleLoginSuccess} onAdminLoginSuccess={handleAdminLoginSuccess} onNavigate={handleNavigate} currentView="login" />} />
+      <Route path="/register" element={<LoginScreen onLoginSuccess={handleLoginSuccess} onAdminLoginSuccess={handleAdminLoginSuccess} onNavigate={handleNavigate} currentView="register" />} />
+      <Route path="/forgot-password" element={<ForgotPasswordScreen onNavigate={handleNavigate} />} />
       <Route path="/dashboard" element={
         <DashboardScreen
           documents={documents}
@@ -106,11 +108,8 @@ export default function AppRoutes() {
           onPermanentlyDeleteDoc={handlePermanentlyDeleteDocument}
         />
       } />
-      <Route path="/admin/login" element={
-        isAdmin ? <Navigate to="/admin" replace /> : <AdminLoginScreen onLoginSuccess={handleAdminLoginSuccess} />
-      } />
       <Route path="/admin" element={
-        isAdmin ? <AdminScreen onLogout={handleAdminLogout} /> : <Navigate to="/admin/login" replace />
+        isAdmin ? <AdminScreen onLogout={handleAdminLogout} /> : <Navigate to="/login" replace />
       } />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

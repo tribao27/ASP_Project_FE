@@ -90,14 +90,7 @@ export const SORT_EXT_OPTIONS = [
 
 /* ── Legacy exports kept for backward compatibility ── */
 
-export const TAB_OPTIONS = [
-  { label: 'Tất cả', value: 'all' },
-  { label: 'PDF', value: 'pdf' },
-  { label: 'Word', value: 'docx' },
-  { label: 'Excel', value: 'xlsx' },
-  { label: 'Hình ảnh', value: 'image' },
-  { label: 'Video', value: 'video' },
-];
+
 
 export const UPLOAD_TYPE_OPTIONS = [
   { value: 'pdf', label: 'Tài liệu PDF' },

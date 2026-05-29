@@ -4,26 +4,7 @@
 // Lấy thời điểm hiện tại trừ đi số phút để mô phỏng dữ liệu "Mới đây"
 const getPastDate = (minutesAgo) => new Date(Date.now() - minutesAgo * 60000).toISOString();
 
-export const MOCK_USERS = [
-  { id: '1', mssv: 'ADMIN', email: 'admin@admin.com', name: 'System Admin', role: 'admin', status: 'active', joined: '2023-01-01T08:00:00Z', cloudUsed: 120, cloudLimit: 5000 },
-  { id: '2', mssv: 'SV001', email: 'vuongbaovipvip@gmail.com', name: 'Vương Bảo', role: 'user', status: 'active', joined: '2023-05-15T09:30:00Z', cloudUsed: 850, cloudLimit: 1000 },
-  { id: '3', mssv: 'SV002', email: 'alex.nguyen@university.edu.vn', name: 'Alex Nguyen', role: 'user', status: 'active', joined: '2023-06-20T14:15:00Z', cloudUsed: 980, cloudLimit: 1000 },
-  { id: '4', mssv: 'SV003', email: 'student01@abc.edu.vn', name: 'Học Viên 01', role: 'user', status: 'banned', joined: '2023-08-01T10:45:00Z', cloudUsed: 45, cloudLimit: 1000 },
-];
 
-export const MOCK_SYSTEM_DOCS = [
-  { id: 'd1', name: 'Giáo trình Triết học.pdf', format: 'pdf', subject: 'Triết học', owner: 'vuongbaovipvip@gmail.com', ownerName: 'Vương Bảo', size: '15 MB', uploadedAt: '2023-10-12T08:30:00Z' },
-  { id: 'd2', name: 'Dataset AI.csv', format: 'csv', subject: 'Trí tuệ nhân tạo', owner: 'alex.nguyen@university.edu.vn', ownerName: 'Alex Nguyen', size: '200 MB', uploadedAt: '2023-10-13T14:15:00Z' },
-  { id: 'd3', name: 'Slide Kỹ Thuật Lập Trình.pptx', format: 'pptx', subject: 'Kỹ Thuật Lập Trình', owner: 'vuongbaovipvip@gmail.com', ownerName: 'Vương Bảo', size: '5 MB', uploadedAt: '2023-10-14T09:00:00Z' },
-  { id: 'd4', name: 'Đề thi thử Lịch Sử Đảng.docx', format: 'docx', subject: 'Lịch sử Đảng', owner: 'student01@abc.edu.vn', ownerName: 'Học Viên 01', size: '2 MB', uploadedAt: '2023-10-15T11:20:00Z' },
-];
-
-export const MOCK_LOGS = [
-  { action: 'AI Chatbot', user: 'Alex Nguyen', detail: 'Chat hỏi đáp về Dataset AI', time: getPastDate(5), icon: 'bi-robot', color: 'purple' },
-  { action: 'Cloud Upload', user: 'Vương Bảo', detail: 'Tải lên Bài tập lớn.zip (50MB)', time: getPastDate(12), icon: 'bi-cloud-arrow-up', color: 'blue' },
-  { action: 'Authentication', user: 'Học Viên 01', detail: 'Đăng nhập thất bại (Tài khoản bị khóa)', time: getPastDate(60), icon: 'bi-shield-lock', color: 'red' },
-  { action: 'Admin Action', user: 'System Admin', detail: 'Nâng cấp dung lượng cho Vương Bảo lên 5GB', time: getPastDate(120), icon: 'bi-hdd-network', color: 'orange' },
-];
 
 export const MOCK_NOTIFICATIONS = [
   {

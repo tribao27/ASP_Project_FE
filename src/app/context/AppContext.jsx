@@ -23,7 +23,7 @@ export const AppProvider = ({ children }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [accentColor, setAccentColor] = useState('#ff5c00');
   const [avatarUrl, setAvatarUrl] = useState('https://lh3.googleusercontent.com/aida-public/AB6AXuBow5mVfiNdaRBNOhUCDdCECelWMAJJIH-qphguPGLIXAfufQTeX5TZ1eZPJ2RfSdkXaqpdbdRwUwLhYiIolmk3c-psChGFWbL2n9oQPwS08-ynfA4bX-5j8Sgxl14-8lsQ9I6NnQy-uqdllZ9XeAPJTOidzr-LY7Xpd1_50olXILb8G_q9AznJwl2LlMupMfzTJViLVuvF-kYTH8HYBj56IAbsBVfAUq8LFA6TipGCkhC8NWRgYYa1dTJuQEBM2wBc6vdwKHvjv3o');
-  
+
   const { documents, activeDoc, addDocument, removeDocument, renameDocument, selectActiveDoc } = useDocuments();
   const [groups, setGroups] = useState([]);
   const [currentGroupId, setCurrentGroupId] = useState(null);
@@ -43,22 +43,22 @@ export const AppProvider = ({ children }) => {
   const handleNavigate = (view) => {
     setSearchTerm('');
     setCurrentGroupId(null);
-    
+
     const pathMap = {
       'landing': '/',
       'login': '/login',
       'register': '/register',
+      'forgot-password': '/forgot-password',
       'dashboard': '/dashboard',
       'ai': '/ai',
       'community': '/community',
       'profile': '/profile',
       'trash': '/trash',
       'payment': '/payment',
-      'admin-login': '/admin/login',
       'admin-dashboard': '/admin'
     };
 
-    const isPublicView = ['landing', 'login', 'register', 'admin-login'].includes(view);
+    const isPublicView = ['landing', 'login', 'register', 'forgot-password'].includes(view);
     if (!currentUser && !isAdmin && !isPublicView) {
       navigate('/login');
     } else {
@@ -84,7 +84,7 @@ export const AppProvider = ({ children }) => {
 
   const handleAdminLogout = () => {
     setIsAdmin(false);
-    navigate('/admin/login');
+    navigate('/login');
   };
 
   const handleRemoveDocument = (docId) => {
@@ -170,7 +170,6 @@ export const AppProvider = ({ children }) => {
     if (path.startsWith('/profile')) return 'profile';
     if (path.startsWith('/trash')) return 'trash';
     if (path.startsWith('/payment')) return 'payment';
-    if (path === '/admin/login') return 'admin-login';
     if (path.startsWith('/admin')) return 'admin-dashboard';
     return 'landing';
   };

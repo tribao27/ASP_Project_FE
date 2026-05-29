@@ -35,26 +35,3 @@ export const formatRelativeTime = (isoString) => {
   }
 };
 
-// Hàm định dạng đầy đủ (Ví dụ: "14/10/2023 10:30")
-export const formatDateTime = (isoString) => {
-  if (!isoString) return '';
-  try {
-    const date = new Date(isoString);
-    if (isNaN(date.getTime())) return isoString;
-    return date.toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-  } catch (e) {
-    return isoString;
-  }
-};
-
-// Hàm định dạng chỉ ngày (Ví dụ: "14/10/2023")
-export const formatDateOnly = (isoString) => {
-  if (!isoString) return '';
-  try {
-    const date = new Date(isoString);
-    if (isNaN(date.getTime())) return isoString;
-    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  } catch (e) {
-    return isoString;
-  }
-};

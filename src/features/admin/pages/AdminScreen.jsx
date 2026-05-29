@@ -118,7 +118,7 @@ export default function AdminScreen({ onLogout }) {
               <motion.button
                 whileHover={{ backgroundColor: 'rgba(255,59,48,0.08)' }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => { onLogout?.(); navigate('/admin/login'); }}
+                onClick={() => { onLogout?.(); navigate('/login'); }}
                 className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'px-4'} gap-3 py-2.5 text-red-500 hover:text-red-400 rounded-xl transition-all w-full text-left cursor-pointer text-[12px] font-medium`}
               >
                 <i className="bi bi-box-arrow-left text-[14px] shrink-0" />
